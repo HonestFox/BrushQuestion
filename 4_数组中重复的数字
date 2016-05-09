@@ -1,0 +1,114 @@
+#include <iostream>
+#include <cassert>
+using namespace std;
+
+/*
+数组中重复的数字
+	题目描述
+
+在一个长度为n的数组里的所有数字都在0到n-1的范围内。
+数组中某些数字是重复的，但不知道有几个数字是重复的。也不知道每个数字重复几次。
+请找出数组中任意一个重复的数字。 
+例如，如果输入长度为7的数组{2,3,1,0,2,5,3}，那么对应的输出是重复的数字2或者3。
+*/
+
+bool duplicate(int numbers[], int length, int* duplication)
+{
+	const int MAXSIZE = 65535;
+	assert(numbers);
+	if (length <= 1)
+	{
+		return false;
+	}
+	int NumBox[MAXSIZE] = { 0 };
+	for (int i = 0 ; i < length; i++)
+	{
+		++NumBox[numbers[i]];
+	}
+	for (int i = 0; i < length; i++)
+	{
+		if(NumBox[numbers[i]] > 1)
+		{
+			*duplication = numbers[i];
+			return true;
+		}
+	}
+	return false;
+}
+
+//最优方案： 由于题目已经告诉了数组中最大的元素小于length 因此可以这样写
+//                  时间复杂度为O(N)  且不需要开辟多余的辅助数组
+bool duplicate_best(int numbers[], int length, int* duplication)
+{
+	assert(numbers);
+	if (length <= 1)
+	{
+		return false;
+	}
+	for (int i = 0; i < length; i++)
+	{
+		int index = numbers[i];
+		//先减回去
+		if (index >= length)
+		{
+			index -= length;
+		}
+		if (numbers[index] >= length)
+		{
+			*duplication = index;
+			return true;
+		}
+		numbers[index] += length;
+	}
+	return false;
+}
+//
+//void Test1()
+//{
+//	//int arr[7] = { 2, 3, 1, 0, 2, 5, 3 };
+//	//int arr[7] = { 1, 1, 1, 1, 1, 1, 1 };
+//	//int arr[7] = { 1, 2, 3 ,4 ,5 ,6 ,7 };
+//	//int arr[1];
+//	int arr[] = { 2, 1, 3, 1, 4 };
+//	int length = sizeof(arr) / sizeof(*arr);
+//	int *duplication = new int;    //重复元素
+//	if (!duplicate(arr, length, duplication))
+//	{
+//		cout << " 没有重复元素" << endl;
+//	}
+//	else
+//	{
+//		cout << *duplication << endl;
+//	}
+//	delete duplication;
+//
+//}
+
+
+void Test1()
+{
+	//int arr[4] = { 2,1, 3,2};
+//	int arr[5] = { 2, 3,0, 2, 3 };
+//	int arr[7] = { 1, 1, 1, 1, 1, 1, 1 };
+	//int arr[7] = { 1, 2, 3 ,4 ,5 ,6 ,7 };
+	//int arr[1];
+	int arr[] = { 2, 1, 3, 1, 4 };
+	int length = sizeof(arr) / sizeof(*arr);
+	int *duplication = new int;    //重复元素
+	if (!duplicate_best(arr, length, duplication))
+	{
+		cout << " 没有重复元素" << endl;
+	}
+	else
+	{
+		cout << *duplication << endl;
+	}
+	delete duplication;
+
+}
+
+int main()
+{
+	Test1();
+	return 0;
+}
