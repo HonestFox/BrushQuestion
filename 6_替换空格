@@ -1,0 +1,44 @@
+void replaceSpace(char *str, int length)
+{
+	int spaceNum = 0;
+	for (int i = 0; i<length; i++)
+	{
+		if (str[i] == ' ')
+			spaceNum++;
+
+	}
+	int newIndex = length + 2 * spaceNum;
+	char *index = str + length;
+	while (index >= str)
+	{
+		if (*index == ' ')
+		{
+			str[newIndex--] = '0';
+			str[newIndex--] = '2';
+			str[newIndex--] = '%';
+		}
+		else {
+			str[newIndex--] = *index;
+		}
+		index--;
+	}
+}
+
+#define DEFAULT_CAPACITY 100
+void Test1()
+{	
+	char *str = new char[DEFAULT_CAPACITY];
+	str[0] = 'A';
+	str[1] = ' ';
+	str[2] = 'B';
+	str[3] = '!';
+	str[4] = '\0';
+	cout << str << endl;
+	int length = 4;
+	replaceSpace(str, length);
+	cout << str << endl;
+}
+
+//总觉得这道题牛客上的编译器怪怪的 
+
+//测试的str必须这样写，开辟一块远大于实际字符串大小的空间存放字符串，才能避免越界访问等一系列问题
