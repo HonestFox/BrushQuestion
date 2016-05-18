@@ -54,3 +54,21 @@ public:
 
 
 //递归~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~（待更新）
+
+  class Solution {
+  public:
+	  vector<int> printListFromTailToHead(struct ListNode* head)
+	  {
+		  vector<int> dev;
+		  if (head == NULL)
+		  {
+			  return dev;
+		  }
+		  if (head->next != NULL)
+		  {
+			  dev = printListFromTailToHead(head->next);
+		  }
+		  dev.push_back(head->val);
+		  return dev;
+	  }
+  };
