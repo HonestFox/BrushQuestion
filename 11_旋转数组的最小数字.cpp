@@ -40,3 +40,47 @@ int main()
 	Test();
 	return 0;
 }
+
+
+
+
+
+
+//改进方法，基于二分查找
+
+class Solution_Better
+{
+public:
+	int minNumberInRotateArray(vector<int> rotateArray)
+	{
+		if (rotateArray.size() == 0)
+		{
+			return 0;
+		}
+		int left = 0;
+		int right = rotateArray.size() - 1;
+		int mid = 0;
+		while (left <= right)
+		{
+			mid = left + (right - left) / 2;                        //防止超出int的范围 所以不能写成 mid =(left + right) / 2  的形式
+			if (rotateArray[mid] > rotateArray[right])
+			{
+				left = mid + 1;
+			}
+			else if (rotateArray[mid] < rotateArray[right])
+			{
+				right = mid;
+			}
+			else// if (rotateArray[mid] == rotateArray[right])
+			{
+				right = right - 1;
+			}
+
+			if (left >= right)
+			{
+				break;
+			}
+		}
+		return rotateArray[left];
+	}
+};
