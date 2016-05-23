@@ -50,7 +50,5 @@ int main()
 	cout << s1.jumpFloorII(3) << endl;
 	cout << s1.jumpFloorII(4) << endl;
 	cout << s1.jumpFloorII(5) << endl;
-
-
 	return 0;
 }
