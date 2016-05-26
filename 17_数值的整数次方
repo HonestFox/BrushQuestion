@@ -1,0 +1,29 @@
+class Solution 
+{
+public:
+	double Power(double base, int exponent) 
+	{
+		int base_prev = base;
+		if (exponent > 0)
+		{
+			while ( --exponent )
+			{
+				base *= base_prev;
+			}
+			return base;
+		}
+		else if (exponent == 0)
+		{
+			return 1;
+		}
+		else
+		{
+			int tmp_exponent = -1 * exponent;
+			while (--tmp_exponent)
+			{
+				base = base * base_prev;
+			}
+			return 1 / base;
+		}
+	}
+};
