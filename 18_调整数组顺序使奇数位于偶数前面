@@ -107,18 +107,4 @@ int main()
 	return 0;
 }
 
-void Test()
-{
 
-}
-using namespace std;
-int main()
-{
-	cout << sizeof(int) << endl;
-	cout << sizeof(long int) << endl;
-	cout << sizeof(long long) << endl;
-	long long ll1 = 9999999999;
-	int i1 = (int)ll1;
-
-	return 0;
-}
