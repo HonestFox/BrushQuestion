@@ -1,0 +1,124 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+/*
+题目描述
+
+输入一个整数数组，实现一个函数来调整该数组中数字的顺序，使得所有的奇数位于数组的前半部分，所有的偶数位于位于数组的后半部分，并保证奇数和奇数，偶数和偶数之间的相对位置不变。
+*/
+
+class Solution
+{
+public:
+	//这种方法可以实现分开奇偶元素，但会导致元素的相对位置发生改变
+	void reOrderArray_WRONG(vector<int> &array) 
+	{
+		int CurFront = 0;
+		int CurTail = array.size() - 1;
+		for (CurFront = 0; CurFront < array.size() / 2; CurFront++)
+		{
+			if (array[CurFront] % 2 == 0)
+			{
+				while (array[CurTail] % 2 == 0)
+				{
+					CurTail--;
+					if (CurTail < 0)
+					{
+						return;
+					}
+				}
+				swap(array[CurFront], array[CurTail]);
+				CurTail--;
+				CurFront--;
+			}
+		}
+	}
+
+	public:
+		/*
+			这种方法的思路是
+			首先统计奇偶元素的个数
+			然后遍历一遍原数组，遇到奇数、偶数就分别存放到该放的位置
+			最后用这个新数组替换掉原来的数组。
+
+			可以看出，这种方法思路挺简单，
+			但新开辟了内存空间，而且需要遍历2遍数组
+			所以显然不是很好的方法，
+			所以我取名叫FOOLISH
+		*/
+		void reOrderArray_FOOLISH(vector<int> &array)
+		{
+			int sz = array.size();
+			if (sz <= 1)
+			{
+				return;
+			}
+			//获取奇、偶元素的个数
+			int OddNum = 0;
+			int EvenNum = 0;
+			for (int i = 0; i < sz; i++)
+			{
+				if (array[i] % 2 == 0)
+				{
+					++EvenNum;
+				}
+				else
+				{
+					++OddNum;
+				}
+			}
+			if (EvenNum == 0 || OddNum == 0)
+			{
+				return;
+			}
+			//填放元素
+			vector<int> ret;
+			int CurOddIndex = 0;
+			int CurEvenIndex = OddNum;
+			ret.resize(sz);
+			for (int i = 0; i < sz; i++)
+			{
+				if (array[i] % 2 == 0)
+				{
+					ret[CurEvenIndex++] = array[i];
+				}
+				else
+				{
+					ret[CurOddIndex++] = array[i];
+				}
+			}
+			array = ret;
+		}
+
+	};
+
+int main()
+{
+	vector<int> ai = { 1, 2, 3, 4, 5, 6, 7 };
+	Solution s;
+	s.reOrderArray_FOOLISH(ai);
+	for (size_t i = 0; i < ai.size(); i++)
+	{
+		cout << ai[i] << " ";
+	}
+	cout << endl;
+	return 0;
+}
+
+void Test()
+{
+
+}
+using namespace std;
+int main()
+{
+	cout << sizeof(int) << endl;
+	cout << sizeof(long int) << endl;
+	cout << sizeof(long long) << endl;
+	long long ll1 = 9999999999;
+	int i1 = (int)ll1;
+
+	return 0;
+}
