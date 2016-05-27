@@ -92,19 +92,74 @@ public:
 			array = ret;
 		}
 
-	};
+public:
+	/*
+			应该是我能想到的最佳方案了
+	*/
+	void reOrderArray_BETTER(vector<int> &array)
+	{
+		int sz = array.size();
+		int CurIndex = 0;
+		int CurEvenIndex = 0;
+		for (CurIndex = 0; CurIndex < sz / 2; CurIndex++)
+		{
+			if (array[CurIndex] % 2 == 0)
+			{
+				GetNextEven(array, CurEvenIndex);
+				MoveFront(array, CurIndex, CurEvenIndex);
+			}
+		}
+	}
+public:
+	//调整位置
+	void MoveFront(vector<int> &array, int left, int right)
+	{
+		int tmp = array[right];
+		for (int i = right; i > left; i--)
+		{
+			array[i] = array[i - 1];
+		}
+		array[left] = tmp;
+	}
+	//找下一个奇数的下标(如果没有找到，则下标不变)
+	void GetNextEven(const vector<int> &array, int &CurEvenIndex)
+	{
+		int sz = array.size();
+		for (int i = CurEvenIndex + 1; i < sz; i++)
+		{
+			if (array[i] % 2 != 0)
+			{
+				CurEvenIndex = i;
+				return;
+			}
+		}
+	}
 
-int main()
+};
+
+void TestGetNextEven()
 {
 	vector<int> ai = { 1, 2, 3, 4, 5, 6, 7 };
 	Solution s;
-	s.reOrderArray_FOOLISH(ai);
-	for (size_t i = 0; i < ai.size(); i++)
-	{
-		cout << ai[i] << " ";
-	}
-	cout << endl;
-	return 0;
+	int index = 1;
+	s.GetNextEven(ai, index);
+	cout << index << endl;
 }
 
+void reOrderArray_BETTER()
+{
+	vector<int> ai = { 2, 2, 2, 2 };
+	Solution s;
+	s.reOrderArray_BETTER(ai);
+	for (int i = 0; i < ai.size(); i++)
+	{
+		cout << ai[i] << " ,";
+	}
+	cout << endl;
+}
+int main()
+{
+	reOrderArray_BETTER();
+	return 0;
+}
 
