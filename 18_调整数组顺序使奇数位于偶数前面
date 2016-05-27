@@ -94,7 +94,7 @@ public:
 
 public:
 	/*
-			应该是我能想到的最佳方案了
+			比较优的方案，但不是最佳
 	*/
 	void reOrderArray_BETTER(vector<int> &array)
 	{
@@ -134,6 +134,30 @@ public:
 			}
 		}
 	}
+	public:
+		/*
+				类似冒泡排序的方式 最多只需要遍历一遍  
+		*/
+		void reOrderArray_BEST(vector<int> &array)
+		{
+			int sz = array.size();
+			bool IsOrdered = true;			
+			for (int i = 0; i < sz - 1; i++)
+			{
+				for (int j = sz - 1; j > i; j--)
+				{
+					if (array[j - 1] % 2 == 0 && array[j] % 2 != 0)
+					{
+						swap( array[j - 1], array[j] );
+					}
+					IsOrdered = false;
+				}
+				if (IsOrdered == true)
+				{
+					return;
+				}
+			}
+		}
 
 };
 
@@ -146,7 +170,7 @@ void TestGetNextEven()
 	cout << index << endl;
 }
 
-void reOrderArray_BETTER()
+void TestreOrderArray_BETTER()
 {
 	vector<int> ai = { 2, 2, 2, 2 };
 	Solution s;
@@ -157,9 +181,21 @@ void reOrderArray_BETTER()
 	}
 	cout << endl;
 }
+
+void TestreOrderArray_BEST()
+{
+	vector<int> ai = { 1, 1,1,1,1,1,1  };
+	Solution s;
+	s.reOrderArray_BEST(ai);
+	for (int i = 0; i < ai.size(); i++)
+	{
+		cout << ai[i] << " ,";
+	}
+	cout << endl;
+}
 int main()
 {
-	reOrderArray_BETTER();
+	TestreOrderArray_BEST();
 	return 0;
 }
 
