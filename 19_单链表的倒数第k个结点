@@ -1,0 +1,45 @@
+/*
+struct ListNode {
+	int val;
+	struct ListNode *next;
+	ListNode(int x) :
+			val(x), next(NULL) {
+	}
+};*/
+class Solution {
+public:
+ListNode* FindKthToTail(ListNode* pListHead, unsigned int k)
+	{
+		if (pListHead == NULL)
+		{
+			return NULL;
+		}
+    	k--;
+		stack<ListNode*> SNode;
+		ListNode *cur = pListHead;
+		int count = 0;
+		while (cur)
+		{
+			count++;
+			SNode.push(cur);
+			cur = cur->next;
+		}
+		if (k >= count)
+		{
+			return NULL;
+		}
+		else if (k == count)
+		{
+			return pListHead;
+		}
+		else
+		{
+			while(k != 0)
+			{ 
+				SNode.pop();
+                k--;
+			}
+			return SNode.top();
+		}
+	}
+};
