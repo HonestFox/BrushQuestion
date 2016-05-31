@@ -1,0 +1,88 @@
+#include <iostream>
+using namespace std; 
+/*
+	题目描述:
+	输入两颗二叉树A，B，判断B是不是A的子结构。
+*/
+
+
+struct TreeNode
+{
+	int val;
+	struct TreeNode *left;
+	struct TreeNode *right;
+	TreeNode(int x)
+		:val(x)
+		, left(NULL)
+		, right(NULL) 
+	{}
+};
+
+class Solution {
+public:
+	bool HasSubtree(TreeNode* pRoot1, TreeNode* pRoot2)
+	{
+		if (pRoot1 == NULL || pRoot2 == NULL)
+		{
+			return false;
+		}
+		bool flag = false;
+		if (pRoot1->val == pRoot2->val)
+		{
+			flag = IsSubTree(pRoot1, pRoot2);
+		}
+		if (!flag)
+		{
+			flag = HasSubtree(pRoot1->left, pRoot2);
+			if (!flag)
+			{
+				flag = HasSubtree(pRoot1->right, pRoot2);
+			}
+		}
+		return flag;
+	}
+public:
+	bool IsSubTree(TreeNode* pRoot1, TreeNode* pRoot2)
+	{
+		if (pRoot2 == NULL)
+		{
+			return true;
+		}
+		else if (pRoot1 == NULL)
+		{
+			return false;
+		}
+		else if(pRoot1->val == pRoot2 -> val)
+		{
+			return ( IsSubTree(pRoot1->left, pRoot2->left) && IsSubTree(pRoot1->right, pRoot2->right) );
+		}
+	}
+};
+
+
+void Test()
+{
+	TreeNode *tn1 = new TreeNode(1);
+	TreeNode *tn2 = new TreeNode(2);
+	TreeNode *tn3 = new TreeNode(3);
+	TreeNode *tn4 = new TreeNode(4);
+	TreeNode *tn5 = new TreeNode(5);
+
+	TreeNode *tn6 = new TreeNode(9);
+
+
+	tn1->left = tn2;
+	tn1->right = tn3;
+	tn2->left = tn4;
+	tn2->right = tn5;
+
+	cout << Solution().HasSubtree(tn1, tn4) << endl;
+	cout << Solution().HasSubtree(tn1, tn6) << endl;
+
+
+}
+int main()
+{
+	Test();
+	return 0;
+}
