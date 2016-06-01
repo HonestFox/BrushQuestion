@@ -65,6 +65,10 @@ public:
 				ret.push_back(matrix[cur_line][cur_col]);
 				count++;
 			}
+			if (count >= size)		//这里需要判断一下
+			{
+				return ret;
+			}
 			cur_col = max_col - 2;
 			cur_line = max_line - 1;
 			max_col--;
