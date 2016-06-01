@@ -36,7 +36,6 @@ using namespace std;
 class Solution
 {
 public:
-
 	vector<int> printMatrix(vector<vector<int> > matrix) 
 	{
 		int max_line = matrix.size();
@@ -48,10 +47,8 @@ public:
 		int cur_line = 0;
 		int cur_col = 0;
 		vector<int> ret;
-
 		while (count < size)
 		{
-
 			//横，从左向右
 			for (cur_col; cur_col < max_col; ++cur_col)
 			{
@@ -59,51 +56,32 @@ public:
 				ret.push_back(matrix[cur_line][cur_col]);
 				count++;
 			}
-			if (count >= size)
-			{
-				return ret;
-			}
 			cur_col = max_col - 1;
 			cur_line = min_line + 1;
 			min_line++;
-
 			//纵，从上到下
 			for (cur_line; cur_line < max_line; cur_line++)
 			{
 				ret.push_back(matrix[cur_line][cur_col]);
 				count++;
 			}
-			if (count >= size)
-			{
-				return ret;
-			}
 			cur_col = max_col - 2;
 			cur_line = max_line - 1;
 			max_col--;
-
 			//横，从右到左
 			for (cur_col; cur_col >= min_col; cur_col--)
 			{
 				ret.push_back(matrix[cur_line][cur_col]);
 				count++;
 			}
-			if (count >= size)
-			{
-				return ret;
-			}
 			cur_col = min_col;
 			cur_line = max_line - 2;
 			max_line--;
-
 			//纵，从下到上
 			for (cur_line; cur_line >= min_line; cur_line--)
 			{
 				ret.push_back(matrix[cur_line][cur_col]);
 				count++;
-			}
-			if (count >= size)
-			{
-				return ret;
 			}
 			cur_col = min_col + 1;
 			cur_line = min_line;
