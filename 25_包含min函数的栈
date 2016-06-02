@@ -1,0 +1,53 @@
+#include <iostream>
+#include <stack>
+using namespace std;
+
+/*
+题目描述:
+定义栈的数据结构，请在该类型中实现一个能够得到栈最小元素的min函数。
+（其实就是要求设计一个栈，能实现O（1）时间复杂度查找最小的元素）
+*/
+class Solution
+{
+public:
+	void push(int value)
+	{
+		_Data.push(value);
+		if (_MinData.empty())
+		{
+			_MinData.push(value);
+		}
+		else
+		{
+			if (value < _MinData.top())
+			{
+				_MinData.push(value);
+			}
+		}
+
+	}
+	void pop() 
+	{
+		if (_Data.top() == _MinData.top())
+		{
+			_MinData.pop();
+		}
+		_Data.pop();
+	}
+	int top() 
+	{
+		return _Data.top();
+	}
+	int min() 
+	{
+		return _MinData.top();
+	}
+protected:
+	stack<int> _Data;
+	stack<int> _MinData;	
+};
+
+int main()
+{
+	return 0;
+}
