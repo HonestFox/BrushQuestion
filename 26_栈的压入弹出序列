@@ -12,7 +12,7 @@ using namespace std;
 class Solution 
 {
 public:
-	bool IsPopOrder(vector<int> pushV, vector<int> popV)				//待会儿改成引用传参！！
+	bool IsPopOrder(vector<int> &pushV, vector<int> &popV) const
 	{
 		vector<int> tmp;
 		if (pushV.size() != popV.size())
