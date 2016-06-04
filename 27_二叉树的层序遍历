@@ -1,0 +1,103 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+
+struct TreeNode
+{
+	int val;
+	struct TreeNode *left;
+	struct TreeNode *right;
+	TreeNode(int x)
+		:val(x)
+		, left(NULL)
+		, right(NULL)
+	{}
+};
+
+class Solution
+{
+public:
+	vector<int> PrintFromTopToBottom(TreeNode *root)
+	{
+		vector<int> ret;
+		if (root == NULL)
+		{
+			return ret;
+		}
+		if (root->left == NULL && root->right == NULL)
+		{
+			cout << root->val << endl;
+			ret.push_back(root->val);
+			return ret;
+		}
+		vector<TreeNode*> box;
+		TreeNode *cur = root;
+		TreeNode *prev = cur;
+		
+		while (ret.empty() || !box.empty())
+		{
+			if (!box.empty())
+			{
+				cur = box.front();
+				box.erase(box.begin());
+			}
+			cout << cur->val << " ";
+			ret.push_back(cur->val);
+			if (cur->left)
+			{
+				//cout << cur->left->val << " ";
+				box.push_back(cur->left);
+			}
+			if (cur->right)
+			{
+				//cout << cur->right->val << " ";
+				box.push_back(cur->right);
+			}
+		}
+		return ret;
+	}
+
+};
+
+
+void Test()
+{
+	TreeNode *p1 = new TreeNode(1);
+	TreeNode *p2 = new TreeNode(2);
+	TreeNode *p3 = new TreeNode(3);
+	TreeNode *p4 = new TreeNode(4);
+	TreeNode *p5 = new TreeNode(5);
+	TreeNode *p6 = new TreeNode(6);
+	p1->left = p2;
+	p1->right = p3;
+	p2->left = p4;
+	p2->right = p5;
+	p3->left = p6;
+	Solution().PrintFromTopToBottom(p1);
+}
+
+void Test2()
+{
+	TreeNode *p1 = new TreeNode(1);
+	TreeNode *p2 = new TreeNode(2);
+	TreeNode *p3 = new TreeNode(3);
+	TreeNode *p4 = new TreeNode(4);
+	TreeNode *p5 = new TreeNode(5);
+	TreeNode *p6 = new TreeNode(6);
+	p1->left = p2;
+	p2->left = p3;
+	p3->left = p4;
+	p4->left = p5;
+	p5->left = p6;
+
+	
+	Solution().PrintFromTopToBottom(p1);
+}
+
+int main()
+{
+	Test2();
+	return 0;
+}
