@@ -1,0 +1,88 @@
+//代码传到牛客上一个测试用例都没通过，显示无输出 
+//但自己测试复制出来的链表没问题
+#include <iostream>
+#include <vector>
+using namespace std;
+
+/*
+题目描述
+输入一个复杂链表（每个节点中有节点值，以及两个指针，一个指向下一个节点，另一个特殊指针指向任意一个节点）。
+*/
+
+struct RandomListNode
+{
+	int label;
+	struct RandomListNode *next, *random;
+	RandomListNode(int x) 
+		:label(x)
+		, next(NULL)
+		, random(NULL) 
+	{}
+};
+
+class Solution 
+{
+public:
+	RandomListNode* Clone(RandomListNode* pHead)
+	{
+		if (pHead == NULL)
+		{
+			return NULL;
+		}
+		RandomListNode *cur = pHead;
+		while (cur)
+		{
+			RandomListNode *tmp = cur->next;
+			RandomListNode *NewNode = new RandomListNode(cur->label);
+			cur->next = NewNode;
+			NewNode->next = tmp;
+			cur = tmp;
+		}
+		cur = pHead;
+		while (cur)
+		{
+			RandomListNode *pos = cur->next;
+			if (cur->random)
+			{
+				pos->random = (cur->random)->next;
+			}
+			cur = pos->next;
+		}
+		cur = pHead;
+		RandomListNode *cur1 = cur->next;
+		RandomListNode *NewHead = cur1;
+		while (cur->next->next != NULL)
+		{
+			cur->next = cur->next->next;
+			cur = cur->next;
+			cur1->next = cur1->next->next;
+			cur1 = cur1->next;
+		}
+		return NewHead;
+	}
+};
+
+void Test()
+{
+	RandomListNode *p1 = new RandomListNode(1);
+	RandomListNode *p2 = new RandomListNode(2);
+	RandomListNode *p3 = new RandomListNode(3);
+	RandomListNode *p4 = new RandomListNode(4);
+	RandomListNode *p5 = new RandomListNode(5);
+
+	p1->next = p2;
+	p2->next = p3;
+	p3->next = p4;
+	p4->next = p5;
+
+
+	p2->random = p4;
+	p4->random = p1;
+
+	RandomListNode *ret = Solution().Clone(p1);
+}
+int main()
+{
+	Test();
+	return 0;
+}
