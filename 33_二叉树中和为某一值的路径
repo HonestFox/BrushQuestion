@@ -1,0 +1,95 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+/*
+题目描述
+输入一颗二叉树和一个整数，打印出二叉树中结点值的和为输入整数的所有路径。路径定义为从树的根结点开始往下一直到叶结点所经过的结点形成一条路径。
+*/
+
+struct TreeNode
+{
+	int val;
+	struct TreeNode *left;
+	struct TreeNode *right;
+	TreeNode(int x)
+		:val(x)
+		, left(NULL)
+		, right(NULL)
+	{}
+};
+
+class Solution 
+{
+public:
+	vector<vector<int> > FindPath(TreeNode* root, int expectNumber)
+	{
+		vector<vector<int> > ret;
+		if (root == NULL)
+		{
+			return ret;
+		}
+		vector<int> vcur;
+		TreeNode *cur = root;
+		int sum = 0;
+		_FindPath(cur, expectNumber, ret, vcur, sum);
+		return ret;
+	}
+
+protected:
+	void _FindPath(TreeNode *cur, int expectNumber, vector<vector<int> > &ret, vector<int> &vcur, int &sum)
+	{
+		if (cur == NULL)			//这个判断条件一开始没有加，牛客一直报段错误。。  后来才发现的，什么时候会出现这种情况呢？比如说某个节点，左孩子存在，右孩子为NULL的时候，如果不在这里处理这种情况，那么在下一个if语句中程序就会崩溃
+		{
+			return;
+		}
+		if (cur->left == NULL && cur->right == NULL)
+		{
+			if (sum + cur->val == expectNumber)
+			{
+				vcur.push_back(cur->val);
+				ret.push_back(vcur);
+				vcur.pop_back();
+			}
+			return;
+		}
+		sum += cur->val;
+		vcur.push_back(cur->val);
+		_FindPath(cur->left, expectNumber, ret, vcur, sum);
+		_FindPath(cur->right, expectNumber, ret, vcur, sum);
+		//当把当前结点的左右都访问了之后，要用sum减去当前结点的值，并把当前结点出栈处理
+		if (!vcur.empty())
+		{
+			sum -= vcur.back();
+			vcur.pop_back();
+		}
+	}
+};
+
+void Test()
+{
+	TreeNode *tn1 = new TreeNode(1);
+	TreeNode *tn2 = new TreeNode(2);
+	TreeNode *tn3 = new TreeNode(3);
+	TreeNode *tn4 = new TreeNode(4);
+	TreeNode *tn5 = new TreeNode(5);
+	TreeNode *tn6 = new TreeNode(6);
+	TreeNode *tn7 = new TreeNode(7);
+
+	tn1->left = tn2;
+	tn1->right = tn3;
+	tn2->left = tn4;
+	tn2->right = tn5;
+	tn3->left = tn6;
+	tn3->right = tn7;
+
+	vector<vector<int> > ret = Solution().FindPath(tn1, 8);
+	ret = Solution().FindPath(tn1, 11);
+
+}
+
+int main()
+{
+	Test();
+	return 0;
+}
