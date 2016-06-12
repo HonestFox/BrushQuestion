@@ -1,0 +1,128 @@
+//int转字符串的办法有点笨了，用了unique_ptr 然而牛客上面的编译器是不认识它的
+
+
+
+#include <iostream>
+#include <vector>
+#include <memory>
+#include <string>
+
+using namespace std;
+
+/*
+题目描述:
+输入一个正整数数组，把数组里所有数字拼接起来排成一个数，打印能拼接出的所有数字中最小的一个。
+例如输入数组{3，32，321}，则打印出这三个数字能排成的最小数字为321323。
+
+*/
+
+
+
+class Solution 
+{
+public:
+	string PrintMinNumber(vector<int> numbers) 
+	{
+		string RetString;
+		while (!numbers.empty())
+		{
+			int index = GetMinIndex(numbers);
+			char *tmpstr = new char[200];
+			unique_ptr<char> c1(_itoa(numbers[index], tmpstr, 10));
+			RetString += c1.get();
+			//删掉这个用过的结点
+			swap(numbers[index], numbers[numbers.size() - 1]);
+			numbers.pop_back();
+		}
+		return RetString;
+	}
+protected:
+	int GetMinIndex(vector<int> &numbers)
+	{
+		int RetIndex = 0;
+		int Min = numbers[0];
+		for (int i = 0; i < numbers.size(); ++i)
+		{
+			if (_IsPrevMin(numbers[i], Min))
+			{
+				Min = numbers[i];
+				RetIndex = i;
+			}
+		}
+		return RetIndex;
+	}
+protected:
+	bool _IsPrevMin(int num1, int num2)
+	{
+		if (num1 == num2)
+		{
+			return true;
+		}
+		char *tmp1 = new char[200];
+		char *tmp2 = new char[200];
+		unique_ptr<char> c1(_itoa(num1, tmp1, 10));
+		unique_ptr<char> c2(_itoa(num2, tmp2, 10));
+		int Index = 0;
+		while (c1.get()[Index] != '\0' && c2.get()[Index] != '\0')
+		{
+			if (c1.get()[Index] < c2.get()[Index])
+			{
+				return true;
+			}
+			else if (c1.get()[Index] > c2.get()[Index])
+			{
+				return false;
+			}
+			++Index;
+		}
+		//走到这里，说明短的那个走完了
+		char *Long = c1.get();
+		char EndPos = c1.get()[Index - 1];
+		bool ISLeftShort = false;
+		if (c1.get()[Index] == '\0')
+		{
+			EndPos = c2.get()[Index - 1];
+			Long = c2.get();
+			ISLeftShort = true;
+		}
+		
+		if (*(Long + Index) <= EndPos)
+		{
+			if (ISLeftShort)
+			{
+				return false;
+			}
+			return true;
+		}
+		else
+		{
+			if (ISLeftShort)
+			{
+				return true;
+			}
+			return false;
+		}
+	}
+};
+
+void Test()
+{
+	vector<int> viec = { 3, 32, 321 };
+	string ret = Solution().PrintMinNumber(viec);
+	cout << ret << endl;
+
+
+}
+
+//void TestIsPrevMin()
+//{
+//	cout << Solution()._IsPrevMin(32, 3) << endl;
+//	cout << Solution()._IsPrevMin(32, 31) << endl;
+//	cout << Solution()._IsPrevMin(32, 329) << endl;
+//}
+
+int main()
+{
+	Test();
+	return 0;
+}
