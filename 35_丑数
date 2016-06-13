@@ -1,0 +1,135 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+/*
+题目描述:
+把只包含因子2、3和5的数称作丑数（Ugly Number）。
+例如6、8都是丑数，但14不是，因为它包含因子7。
+习惯上我们把1当做是第一个丑数。求按从小到大的顺序的第N个丑数。
+*/
+
+//1，2，3，4，5，6，8，9，10，12，15
+// 2^x * 3 ^y * 5 *z
+class Solution
+{
+public:
+	int GetUglyNumber_Solution(int index)
+	{
+		if (index < 1)
+		{
+			return -1;
+		}
+		int count = 1;
+		int ret = 1;
+		int muls[3] = { 0 };
+		int tmp = 1;
+	//	int PrevMuls[3] = { 0 };
+
+		int AddIndex = 0;
+		while (count < index)
+		{
+			bool IsChanged = false;
+			tmp = _GetVal(muls);
+			if (tmp > ret)
+			{
+				IsChanged = true;
+			}
+			else
+			{
+				muls[0] += 2;
+				int TmpCmp = _GetVal(muls);
+				muls[0] -= 2;
+				for (int i = 0; i < 3; ++i)
+				{
+					++muls[i];
+					tmp = _GetVal(muls);
+					--muls[i];
+					if (tmp > ret)
+					{
+						if (TmpCmp > ret && TmpCmp < tmp)
+						{
+							tmp = TmpCmp;
+						}
+						IsChanged = true;
+						break;
+					}
+				}
+			}
+			if (IsChanged)
+			{
+				ret = tmp;
+				++count;
+			}
+			else
+			{
+				if (AddIndex == 0)
+				{
+					++muls[AddIndex];
+					AddIndex++;
+					int tmp = _GetVal(muls);
+					if (tmp > ret)
+					{
+						IsChanged = true;
+					}
+					else
+					{
+						--muls[AddIndex];
+					}
+				}
+				else if (AddIndex == 1)
+				{
+					--muls[AddIndex] - 1;
+					++muls[AddIndex];
+					AddIndex++;
+				}
+				else if (AddIndex == 2)
+				{
+					--muls[AddIndex] - 1;
+					++muls[AddIndex];
+					AddIndex = 0;
+				}
+			}
+	//		ArrCpy(muls, PrevMuls, 3);
+		}
+		return ret;
+	}
+protected:
+public://
+	int _GetVal(int *muls)
+	{
+		int ret = pow(2, *(muls + 0)) * pow(3, *(muls + 1)) * pow(5, *(muls + 2));
+		return ret;
+	}
+	
+	void ArrCpy(const int *src, int *dst, int sz)
+	{
+		for (int i = 0; i < sz; ++i)
+		{
+			*(dst + i) = *(src + i);
+		}
+	}
+};
+
+void Test_GetVal()
+{
+	int arr[3] = { 1, 0, 0 };
+	cout << Solution()._GetVal(arr) << endl;
+	//cout << pow(2, 3) << endl;
+}
+
+void Test()
+{
+	for (int i = 0; i < 20; ++i)
+	{
+		cout << Solution().GetUglyNumber_Solution(i) << "   ";
+	}
+	cout << endl;
+}
+
+int main()
+{
+	//Test_GetVal();
+	Test();
+	return 0;
+}
