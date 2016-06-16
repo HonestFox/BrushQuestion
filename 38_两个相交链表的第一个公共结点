@@ -1,0 +1,100 @@
+#include <iostream>
+using namespace std;
+
+/*
+题目描述 
+输入两个链表，找出它们的第一个公共结点。
+*/
+struct ListNode
+{
+	int val;
+	struct ListNode *next;
+	ListNode(int x)
+		:val(x)
+		, next(NULL)
+	{}
+};
+class Solution
+{
+public:
+	ListNode* FindFirstCommonNode(ListNode *pHead1, ListNode *pHead2)
+	{
+		if (pHead1 == NULL || pHead2 == NULL)
+		{
+			return NULL;
+		}
+		int length1 = 0;
+		int length2 = 0;
+		ListNode *cur = pHead1;
+		while (cur)
+		{
+			cur = cur->next;
+			++length1;
+		}
+		cur = pHead2;
+		while (cur)
+		{
+			cur = cur->next;
+			++length2;
+		}
+		int gap = length1 - length2;
+		ListNode *LongList = pHead1;
+		ListNode *ShortList = pHead2;
+		if (gap < 0)
+		{
+			LongList = pHead2;
+			ShortList = pHead1;
+		}
+		while (gap--)
+		{
+			LongList = LongList->next;
+		}
+		while (LongList != ShortList)
+		{
+			LongList = LongList->next;
+			ShortList = ShortList->next;
+		}
+		return LongList;
+	}
+
+
+public:
+	ListNode* FindFirstCommonNode_2(ListNode *pHead1, ListNode *pHead2)
+	{
+		ListNode *p1 = pHead1;
+		ListNode *p2 = pHead2;
+		while (p1 != p2) {
+			p1 = (p1 == NULL ? pHead2 : p1->next);
+			p2 = (p2 == NULL ? pHead1 : p2->next);
+		}
+		return p1;
+	}
+
+};
+void Test()
+{
+	ListNode *node1 = new ListNode(1);
+	ListNode *node2 = new ListNode(2);
+	ListNode *node3 = new ListNode(3);
+	ListNode *node4 = new ListNode(4);
+	ListNode *node5 = new ListNode(5);
+	ListNode *node6 = new ListNode(6);
+	ListNode *node7 = new ListNode(7);
+
+	node1->next = node2;
+	node2->next = node3;
+	node3->next = node4;
+	node4->next = node5;
+	node6->next = node7;
+	node7->next = node2;
+
+	ListNode *ret1 = Solution().FindFirstCommonNode(node1, node6);
+	//ListNode *ret2 = Solution().FindFirstCommonNode_2(node1, node6);
+
+}
+
+int main()
+{
+	Test();
+	return 0;
+}
