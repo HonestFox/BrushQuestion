@@ -5,8 +5,8 @@ using namespace std;
 class Solution
 {
 public:
-//普通的方法
-	int GetNumberOfK(vector<int> data, int k) 
+	//普通方法
+	int GetNumberOfK_Normal(vector<int> data, int k) 
 	{
 		if (data.empty())
 		{
@@ -26,15 +26,133 @@ public:
 		}
 		return RetCount;
 	}
+	//______________________________________________________________________________________
+	//______________________________________________________________________________________
+
+	//深度优化
+public:
+	int GetNumberOfK_Improve(const vector<int> &data, int k)
+	{
+		if (data.empty())
+		{
+			return 0;
+		}
+		int RightIndex = data.size() - 1;
+		int LeftIndex = 0;
+		int RetCount = 0;
+		//先找一个在范围内的点
+		int MidAroundIndex = FindIndex(data, LeftIndex, RightIndex, k);
+		//如果没有找到，返回0
+		if (MidAroundIndex == -1)
+		{
+			return 0;
+		}
+		while (LeftIndex < MidAroundIndex && data[LeftIndex] <= data[MidAroundIndex])
+		{
+			int tmp = LeftIndex;
+			if (data[LeftIndex] < data[MidAroundIndex])
+			{
+				LeftIndex = FindIndex(data, LeftIndex, MidAroundIndex, k);
+			}
+			else
+			{
+				LeftIndex = FindIndex(data, 0, LeftIndex, k);
+			}
+			if (tmp == LeftIndex)
+			{
+				break;
+			}
+		}
+		int LeftEdge = LeftIndex;
+		while (RightIndex > MidAroundIndex && data[RightIndex] >= data[MidAroundIndex])
+		{
+			int tmp = RightIndex;
+			if (data[RightIndex] > data[MidAroundIndex])
+			{
+				RightIndex = FindIndex(data, MidAroundIndex, RightIndex, k);
+			}
+			else
+			{
+				RightIndex = FindIndex(data, RightIndex, data.size() - 1, k);
+			}
+			if (tmp == RightIndex)
+			{
+				break;
+			}
+		}
+		int RightEdge = RightIndex;
+		RetCount = RightEdge - LeftEdge + 1;
+		return RetCount;
+	}
+protected:
+	int FindIndex(const vector<int> &data, int left, int right, int aim)  //[ ]
+	{
+		if (left == right)
+		{
+			return data[left] == aim ? left : -1;
+		}
+		int mid = (left - right) / 2 + right - 1;
+		while (left <= right)
+		{
+			if (data[mid] == aim)
+			{
+				return mid;
+			}
+			else if (data[mid] < aim)
+			{
+				left = mid + 1;
+				mid = (mid - right) / 2 + right;
+			}
+			else if (data[mid] > aim)
+			{
+				right = mid - 1;
+				mid = (mid - left) / 2 + left;
+			}
+		}
+		if (data[mid] != aim)
+		{
+			return -1;
+		}
+		return mid;
+	}
+
 };
 
 void Test()
 {
-	vector<int> ivec1 = { 1,  3, 5, 7, 7, 8 };
-	cout << Solution().GetNumberOfK(ivec1, 7) << endl;
+	vector<int> ivec1 = { 1, 2, 3, 3, 5, 7, 8, 8, 8, 8, 9, 9};
+	//cout << Solution().FindIndex(ivec1, 0, ivec1.size() - 1, i) << ": " << ivec1[Solution().FindIndex(ivec1, 0, ivec1.size() - 1, i)];
+	cout << Solution().GetNumberOfK_Improve(ivec1, 1) << endl;
+	cout << Solution().GetNumberOfK_Improve(ivec1, 2) << endl;
+	cout << Solution().GetNumberOfK_Improve(ivec1, 3) << endl;
+	cout << Solution().GetNumberOfK_Improve(ivec1, 5) << endl;
+	cout << Solution().GetNumberOfK_Improve(ivec1, 7) << endl;
+	cout << Solution().GetNumberOfK_Improve(ivec1, 8) << endl;
+	cout << Solution().GetNumberOfK_Improve(ivec1, 9) << endl;
+
+}
+
+void Test1()
+{
+	vector<int> ivec1 = { 1, 2, 3, 3, 5, 7, 8, 8, 8, 8, 9, 9 };
+	cout << Solution().GetNumberOfK_Normal(ivec1, 1) << endl;
+	cout << Solution().GetNumberOfK_Normal(ivec1, 2) << endl;
+	cout << Solution().GetNumberOfK_Normal(ivec1, 3) << endl;
+	cout << Solution().GetNumberOfK_Normal(ivec1, 5) << endl;
+	cout << Solution().GetNumberOfK_Normal(ivec1, 7) << endl;
+	cout << Solution().GetNumberOfK_Normal(ivec1, 8) << endl;
+	cout << Solution().GetNumberOfK_Normal(ivec1, 9) << endl;
+}
+
+void Test2()
+{
+	vector<int> ivec1 = { 3};
+	cout << Solution().GetNumberOfK_Normal(ivec1, 4) << endl;
+	cout << Solution().GetNumberOfK_Improve(ivec1, 4) << endl;
+
 }
 int main()
 {
-	Test();
+	Test2();
 	return 0;
 }
