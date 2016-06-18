@@ -1,0 +1,152 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+
+/*
+题目描述:
+输入一棵二叉树，求该树的深度。从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的长度为树的深度。
+*/
+
+
+
+
+struct TreeNode
+{
+	int val;
+	struct TreeNode *left;
+	struct TreeNode *right;
+	TreeNode(int x) 
+		:val(x)
+		, left(NULL),
+		right(NULL)
+	{}
+};
+class Solution 
+{
+public:
+	int TreeDepth(TreeNode* pRoot)
+	{
+		typedef TreeNode Node;
+		vector<Node*> StNode;
+		vector<int> StDepth;
+		if (!pRoot)
+		{
+			return 0;
+		}
+		int Depth = 0;
+		int MaxDepth = 0;
+		Node *prev = pRoot;
+		
+		while (!StNode.empty() || prev )
+		{
+			if (prev->left && prev->right)
+			{
+				StNode.push_back(prev);
+				StDepth.push_back(Depth);
+				prev = prev->left;
+				++Depth;
+			}
+			else if (prev->left)
+			{
+				prev = prev->left;
+				++Depth;
+			}
+			else if(prev->right)
+			{
+				prev = prev->right;
+				++Depth;
+			}
+			else   //到了叶子结点
+			{
+				++Depth; 
+				if (MaxDepth < Depth)
+				{
+					MaxDepth = Depth;
+				}
+				MaxDepth = Depth;
+				if (!StNode.empty())
+				{
+					prev = StNode.back();
+					Depth = StDepth.back();
+					StNode.pop_back();
+					StDepth.pop_back();
+					//返回保存的结点，要向右移动一位
+					prev = prev->right;
+					++Depth;
+				}
+				else
+				{
+					prev = NULL;
+				}
+			}
+
+		}
+		return MaxDepth;
+	}
+};
+
+typedef TreeNode Node;
+void Test()
+{
+	Node *Node1 = new Node(1);
+	Node *Node2 = new Node(2);
+	Node *Node3 = new Node(3);
+	Node *Node4 = new Node(4);
+	Node *Node5 = new Node(5);
+	Node *Node6 = new Node(6);
+	Node *Node7 = new Node(7);
+	
+	cout << "expect: 3" << endl;
+	Node1->left = Node2;
+	Node1->right = Node3;
+	Node2->left = Node4;
+	Node2->right = Node5;
+	Node3->right = Node7;
+	Node4->left = Node6;
+	cout << "result: " << Solution().TreeDepth(Node1) << endl << endl;
+}
+
+void Test1()
+{
+	Node *Node1 = new Node(1);
+	Node *Node2 = new Node(2);
+	Node *Node3 = new Node(3);
+	Node *Node4 = new Node(4);
+	Node *Node5 = new Node(5);
+	cout << "expect: 5" << endl;
+	Node1->left = Node2;
+	Node2->left = Node3;
+	Node3->left = Node4;
+	Node4->left = Node5;
+	cout << "result:" << Solution().TreeDepth(Node1) << endl << endl;
+
+}
+
+void Test2()
+{
+	Node *Node1 = new Node(1);
+	Node *Node2 = new Node(2);
+	Node *Node3 = new Node(3);
+	Node *Node4 = new Node(4);
+	Node *Node5 = new Node(5);
+	Node *Node6 = new Node(6);
+	Node *Node7 = new Node(7);
+	cout << "expect: 4" << endl;
+	Node1->left = Node2;
+	Node1->right = Node3;
+	Node2->left = Node4;
+	Node2->right = Node5;
+	Node5->left = Node7;
+	Node3->right = Node6;
+	cout << "result: " << Solution().TreeDepth(Node1) << endl << endl;
+
+}
+int main()
+{
+	Test();
+	Test1();
+	Test2();
+	return 0;
+}
