@@ -1,0 +1,100 @@
+#include <iostream>
+using namespace std;
+
+
+/*
+题目描述:
+输入一棵二叉树，判断该二叉树是否是平衡二叉树。
+*/
+
+struct TreeNode
+{
+	TreeNode(int data)
+		:left(NULL)
+		,right(NULL)
+		,_data(data)
+	{}
+
+	TreeNode *left;
+	TreeNode *right;
+	int _data;
+};
+
+
+class Solution
+{
+public:
+	bool IsBalanced_Solution(TreeNode* pRoot)
+	{
+		if (pRoot == NULL)
+		{
+			return true;
+		}
+		TreeNode *cur = pRoot;
+
+		int left = Height(cur->left);
+		int right = Height(cur->right);
+		if (right - left < -1 || right - left > 1)
+		{
+			return false;
+		}
+		return (IsBalanced_Solution(cur->left) && IsBalanced_Solution(cur->right));
+
+	}
+	int Height(TreeNode *pRoot)
+	{
+		return _Height(pRoot);
+	}
+protected:
+	int _Height(TreeNode *pRoot)
+	{
+		if(pRoot == NULL)
+		{
+			return 0;
+		}
+		if (pRoot->left == 0 && pRoot->right == 0)
+		{
+			return 1;
+		}
+		int LeftHeight = _Height(pRoot->left);
+		int RightHeight = _Height(pRoot->right);
+		return LeftHeight > RightHeight ? LeftHeight + 1 : RightHeight + 1;
+	}
+};
+
+void Test1()
+{
+	TreeNode *pNode1 = new TreeNode(1);
+	TreeNode *pNode2 = new TreeNode(2);
+	TreeNode *pNode3 = new TreeNode(3);
+	TreeNode *pNode4 = new TreeNode(4);
+
+	pNode1->left = pNode2;
+	pNode1->right = pNode3;
+	pNode2->left = pNode4;
+
+	cout << Solution().Height(pNode1);
+}
+
+void Test2()
+{
+	TreeNode *pNode1 = new TreeNode(1);
+	TreeNode *pNode2 = new TreeNode(2);
+	TreeNode *pNode3 = new TreeNode(3);
+	TreeNode *pNode4 = new TreeNode(4);
+	TreeNode *pNode5 = new TreeNode(5);
+
+
+	pNode1->left = pNode2;
+	pNode1->right = pNode3;
+	pNode2->left = pNode4;
+//	pNode4->left = pNode5;
+	pNode2->right = pNode5;
+
+	cout << Solution().IsBalanced_Solution(pNode1);
+}
+int main()
+{
+	Test2();
+	return 0;
+}
