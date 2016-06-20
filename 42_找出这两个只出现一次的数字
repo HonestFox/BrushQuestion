@@ -1,0 +1,135 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+/*
+题目描述
+一个整型数组里除了两个数字之外，其他的数字都出现了两次。请写程序找出这两个只出现一次的数字。
+*/
+
+class Solution
+{
+public:
+	//方法1：用哈希
+	void FindNumsAppearOnce(vector<int> data, int* num1, int *num2) 
+	{
+		vector<int> hash;
+		int max = data[0];
+		int min = data[0];
+		int sz = data.size();
+		for (int i = 0; i < sz; ++i)
+		{
+			if (max < data[i])
+			{
+				max = data[i];
+			}
+			if (min > data[i])
+			{
+				min = data[i];
+			}
+		}
+		int HashSize = max - min + 1;
+		hash.resize(HashSize);
+		for (int i = 0; i < sz; ++i)
+		{
+			++hash[data[i] - min];
+		}
+		for (int i = 0; i < HashSize; ++i)
+		{
+			if (hash[i] == 1)
+			{
+				if (!*num1)
+				{
+					*num1 = i + min;
+				}
+				else
+				{
+					*num2 = i + min;
+					return;
+				}
+			}
+		}
+		*num2 = 0;
+	}
+
+	//方法2 用异或
+	void FindNumsAppearOnce_2(vector<int> data, int *num1, int *num2)
+	{
+		if (data.size() < 2)
+		{
+			return;
+		}
+		int val = data[0];
+		for (int i = 1; i < data.size(); ++i)
+		{
+			val ^= data[i];
+		}
+		int count = 0;
+		int num = 1;
+		while ((val & num) == 0)
+		{
+			num <<= 1;
+			++count;
+		}
+		int pos = 1;
+		while (count--)
+		{
+			pos <<= 1;
+		}
+		vector<int> v1;
+		vector<int> v2;
+		for (int &i : data)
+		{
+			if ((i & pos) == 0)	//注意优先级
+			{
+				v1.push_back(i);
+			}
+			else
+			{
+				v2.push_back(i);
+			}
+		}
+		//再分别找
+		int val1 = v1[0];
+		int val2 = v2[0];
+		for (int i = 1; i < v1.size(); ++i)
+		{
+			val1 ^= v1[i];
+		}
+		*num1 = val1;
+		for (int i = 1; i < v2.size(); ++i)
+		{
+			val2 ^= v2[i];
+		}
+		*num2 = val2;
+	}
+};
+
+void Test()
+{
+	vector<int> viec = { 2, 4, 3, 6, 3, 2, 5, 5 };
+	int a = 0;
+	int b = 0;
+	int *p1 = &a;
+	int *p2 = &b;
+	Solution().FindNumsAppearOnce(viec, p1, p2);
+	cout << *p1 << "  " << *p2 << endl;
+}
+
+void Test1()
+{
+	vector<int> viec = { 2, 4, 3, 6, 3, 2, 5, 5 };
+	int a = 0;
+	int b = 0;
+	int *p1 = &a;
+	int *p2 = &b;
+	Solution().FindNumsAppearOnce_2(viec, p1, p2);
+	cout << *p1 << "  " << *p2 << endl;
+}
+int main()
+{
+	//Test();
+	Test1();
+	return 0;
+}
