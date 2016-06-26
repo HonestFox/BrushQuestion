@@ -1,0 +1,89 @@
+#include <iostream>
+using namespace std;
+
+/*
+题目描述:
+每年六一儿童节,NowCoder都会准备一些小礼物去看望孤儿院的小朋友,今年亦是如此。HF作为NowCoder的资深元老,自然也准备了一些小游戏。
+其中,有个游戏是这样的:首先,让小朋友们围成一个大圈。然后,他随机指定一个数m,让编号为0的小朋友开始报数。
+每次喊到m的那个小朋友要出列唱首歌,然后可以在礼品箱中任意的挑选礼物,并且不再回到圈中从他的下一个小朋友开始,继续0...m-1报数....这样下去....直到剩下最后一个小朋友,可以不用表演,并且拿到NowCoder名贵的“名侦探柯南”典藏版(名额有限哦!!^_^)。请你试着想下,哪个小朋友会得到这份礼品呢？
+*/
+
+//0   1  2  3   4  5 6  7 
+//a	b	c	d	e	f	g h  ->    a c e g    ->   a e
+//b	d	f	h   
+//1	3	5	7	 2  6  			
+class Solution
+{
+public:
+	//第一种方法，直接用循环链表处理，直观
+	int LastRemaining_Solution_List(unsigned int n, unsigned int m)
+	{
+		if (n < 1 || m < 0)
+		{
+			return -1;
+		}
+		CreateLinkList(n);
+		Node *cur = _pHead;
+		unsigned int i = 0;
+		int count = 1;
+		while (i < n - 1)
+		{
+			if (count == m)
+			{
+				//删掉cur
+				Node *del = cur->_next;
+				cur->_num = del->_num;
+				cur->_next = del->_next;
+				delete del;
+				count = 1;
+				++i;
+			}
+			//if (i == n - 1)
+			//{
+			//	break;
+			//}
+			cur = cur->_next;
+			++count;
+
+		}
+		return cur->_num;
+	}
+protected:
+	struct Node
+	{
+		Node(int num)
+			:_next(NULL)
+			, _num(num)
+		{}
+		Node *_next;
+		int _num;
+	};
+
+	void CreateLinkList(int n)
+	{
+		Node *pHead = new Node(0);
+		Node *cur = pHead;
+		int i = 1;
+		while (i < n)
+		{
+			Node *NewNode = new Node(i);
+			cur->_next = NewNode;
+			cur = NewNode;
+			i++;
+		}
+		cur->_next = pHead;
+		_pHead = pHead;
+	}
+
+	Node *_pHead;
+};
+
+void Test()
+{
+	cout << Solution().LastRemaining_Solution_List(5, 3) << endl;;
+}
+int main()
+{
+	Test();
+	return 0;
+}
