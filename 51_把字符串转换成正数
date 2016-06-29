@@ -1,0 +1,54 @@
+#include <iostream>
+using namespace std;
+
+/*
+题目描述
+将一个字符串转换成一个整数，要求不能使用字符串转换整数的库函数。
+*/
+
+class Solution 
+{
+public:
+	int StrToInt(string str) 
+	{
+		int ret = 0;
+		int cur = 0;
+		int sz = str.size();
+		bool IsNeg = false;
+		if (str[0] == '+')
+		{
+			++cur;
+		}
+		else if (str[0] == '-')
+		{
+			IsNeg = true;
+			++cur;
+		}
+
+		while (cur < sz )
+		{
+			if (str[cur] < '0' || str[cur] > '9')
+			{
+				return 0;
+			}
+			ret = ret * 10 + ( str[cur] - '0');
+			++cur;
+		}
+		if (IsNeg)
+		{
+			ret *= -1;
+		}
+		return ret;
+	}
+};
+
+void Test()
+{
+	cout << Solution().StrToInt("+1234a5");
+}
+
+int main()
+{
+	Test();
+	return 0;
+}
