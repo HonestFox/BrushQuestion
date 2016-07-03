@@ -1,0 +1,181 @@
+//  写得不好  “补丁”打的太多了  完全没有可读性
+//  以后有时间重新完成一遍
+
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+/*
+题目描述：
+请实现一个函数用来匹配包括'.'和'*'的正则表达式。
+模式中的字符'.'表示任意一个字符，而'*'表示它前面的字符可以出现任意次（包含0次）。    （要考虑一种情况 ————".*"）
+在本题中，匹配是指字符串的所有字符匹配整个模式。例如，字符串"aaa"与模式"a.a"和"ab*ac*a"匹配，但是与"aa.a"和"ab*a"均不匹配
+*/
+
+/*
+测试用例：
+匹配的：
+	"aaa" ->  "a.a"
+	"aaa" ->  "ab*ac*a"
+	"aaa" ->  "a*"
+	"aab" ->  "a*b"
+
+不匹配的：
+	"aaa" -> "aa.a"
+	"aaa" -> "ab*a"
+*/
+class Solution 
+{
+public:
+	bool match(char* str, char* pattern)
+	{
+		if (!str || !pattern)
+		{
+			return false;
+		}
+		int index1 = 0;
+		int index2 = 0;
+		int sz1 = strlen(str);
+		int sz2 = strlen(pattern);
+		if (pattern[0] == '.' && pattern[1] == '*' && pattern[2] == '\0')
+		{
+			return true;
+		}
+		else if (sz1 == 0 || sz2 == 0)
+		{
+			if (sz1 == sz2)  // 0
+			{
+				return true;
+			}
+			if (pattern[1] == '*')
+			{
+				return true;
+			}
+			return false;
+		}
+
+		if (str[sz1 - 1] != pattern[sz2 - 1] && pattern[sz2 - 1] != '*' && pattern[sz2 - 1] != '.')
+		{
+			return false;
+		}
+
+		while (index1 != sz1 && index2 != sz2)
+		{
+			if (pattern[index2] == '.')					//遇到 ' . ' 则index1和index2都偏移，并继续
+			{
+				if (pattern[index2 + 1] == '*')
+				{
+					return true;
+				}
+				++index1;
+				++index2;
+				continue;
+			}
+			else if (pattern[index2] == '*')				//遇到'*'，则分别找'*'后面的字符在原字符串和表达式中下标  
+			{
+				char next = pattern[index2 + 1];
+				if (next == '\0')					//	"aaa" ->  "a*" 这种情况
+				{
+					char CurAlpha = pattern[index2 - 1];
+					int CurIndex = index2 - 1;
+					while (CurIndex < sz1)
+					{
+						if (CurAlpha != pattern[index2 - 1])
+						{
+							return false;
+						}
+						CurAlpha = str[++CurIndex];
+					}
+					if (CurIndex == sz1)
+					{
+						return true;
+					}
+				}
+				else  //  "aa" "a*b*"
+				{
+					char prev = str[index1];
+					while (str[index1] == pattern[index2 - 1])
+					{
+						++index1;
+					}
+					if (str[index1] == '\0' && pattern[index2 + 1] == prev && pattern[index2 + 2] == '\0')
+					{
+						//cout << "remain" << endl;
+						return true;
+					}
+					while (str[index1] != next)
+					{
+						++index1;
+						if (index1 == sz1)
+						{
+							++index2;
+							break;
+						}
+					}
+					++index2;
+				}
+			}
+			else	if (str[index1] != pattern[index2])				//遇到不相等的元素      "aaa", "ab*ac*a"
+			{
+				if (pattern[index2 + 1] != '*')
+				{
+					return false;
+				}
+				else
+				{
+					index2 += 2;
+					continue;
+				}
+			}
+			++index1;
+			++index2;
+			if (index1 >= sz1 || index2 >= sz2)
+			{
+				break;
+			}
+			if (index1 == sz1 &&index2 == sz2)
+			{
+				return true;
+			}
+		}
+		//字符串和表达式都解析完成，但后面还有一个'*'  此时，'*'前面的字符肯定是出现1次的
+		if (pattern[index2] == '*')
+		{
+			return true;
+		}
+		if (str[index1] == '\0' && pattern[index2] == '\0')
+		{
+			return true;
+		}
+		if (str[index1] == '\0' && pattern[index2 + 1] == '*' && pattern[index2 + 2] == '\0')
+		{
+			return true;
+		}
+
+		return false;
+	}
+};
+
+void Test()
+{
+	cout << Solution().match("aaa", "a.a") << endl;		//1	1
+	cout << Solution().match("aaa", "ab*ac*a") << endl;		//1	0
+	cout << Solution().match("aaa", "aaa*") << endl;	//1	1
+	cout << Solution().match("aa", "a*b*") << endl;		//1   1
+	cout << Solution().match("", ".*") << endl;  // 1   1
+	cout << Solution().match("", "C*") << endl;  // 1   1
+	cout << Solution().match("a", "ab*") << endl;  // 1   1
+	cout << Solution().match("aab", "c*a*b") << endl;  // 1  1
+	cout << Solution().match("aaa", "a*a") << endl;  // 1  0
+	cout << Solution().match("aaac", "a*ac") << endl;  // 1  0
+	cout << Solution().match("aaa", "aa.a") << endl;	//0	0
+	cout << Solution().match("aaa", "ab*a") << endl;	//0	0
+	cout << Solution().match("a", "ab*a") << endl;  // 0  0
+	cout << Solution().match("bcbbabab", ".*a*a") << endl;	//0  1
+}
+
+int main()
+{
+	Test();
+	return 0;
+}
