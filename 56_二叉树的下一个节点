@@ -1,0 +1,176 @@
+#include <iostream>
+using namespace std;
+
+/*
+题目描述:
+给定一个二叉树和其中的一个结点，请找出中序遍历顺序的下一个结点并且返回。
+注意，树中的结点不仅包含左右子结点，同时包含指向父结点的指针。
+*/
+struct TreeLinkNode
+{
+	int val;
+	struct TreeLinkNode *left;
+	struct TreeLinkNode *right;
+	struct TreeLinkNode *next;
+	TreeLinkNode(int x = 0) :val(x), left(NULL), right(NULL), next(NULL)
+	{}
+};
+
+
+class Solution
+{
+public:
+	TreeLinkNode* GetNext(TreeLinkNode* pNode)
+	{
+		if (pNode == NULL)
+		{
+			return NULL;
+		}
+		if (pNode->right == NULL && pNode->next == NULL)
+		{
+			return NULL;
+		}
+
+		TreeLinkNode *cur = pNode;
+		//找到这棵树的最右结点
+		if(cur->right == NULL)
+		while (cur != NULL && cur->next && cur->next->right == cur)
+		{
+			cur = cur->next;
+			if (cur->next == NULL)
+			{
+				return NULL;
+			}
+		}
+
+		TreeLinkNode *NodeR = pNode->right;
+ 		if (NodeR != NULL)    		//找右子树的最左结点
+		{
+			TreeLinkNode *cur = NodeR->left;
+			TreeLinkNode *prev = NodeR;
+			while (cur)
+			{
+				prev = cur;
+				cur = cur->left;
+			}
+			return prev;
+		}
+		else if (pNode->next->left == pNode && pNode->right == NULL)	//如果当前结点是它父节点的左孩子则返回它的父节点
+		{
+			return pNode->next;
+		}
+		else if (pNode->next->right == pNode)			//结点5的这种情况
+		{
+			return pNode->next->next;
+		}
+		return NULL;
+	}
+
+	void InOrder(TreeLinkNode *Node)
+	{
+		_InOrder(Node);
+		cout << endl;
+	}
+
+protected:
+	void _InOrder(TreeLinkNode *Node)
+	{
+		if (Node == NULL)
+		{
+			return;
+		}
+		_InOrder(Node->left);
+		cout << Node->val << "  ";
+		_InOrder(Node->right);
+
+	}
+};
+
+
+
+void Test()
+{
+	TreeLinkNode *Node[8];
+	for (int i = 1; i < 8; ++i)
+	{
+		Node[i] = new TreeLinkNode(i);
+	}
+
+	Node[1]->left = Node[2];
+	Node[1]->right = Node[3];
+	Node[2]->left = Node[4];
+	Node[2]->right = Node[5];
+	Node[5]->left = Node[7];
+	Node[3]->right = Node[6];
+
+	Node[7]->next = Node[5];
+	Node[5]->next = Node[2];
+	Node[4]->next = Node[2];
+	Node[2]->next = Node[1];
+	Node[6]->next = Node[3];
+	Node[3]->next = Node[1];
+
+	for (int i = 1; i < 8; ++i)
+	{
+		TreeLinkNode *TmpNode = (Solution().GetNext(Node[i]));
+		int val = -1;
+		if ( (Solution().GetNext(Node[i])) != NULL)
+		{
+			val = (Solution().GetNext(Node[i]))->val;
+		}
+		else
+		{
+			val = -1;
+		}
+		cout <<i << " -> next   = "<< val << endl;
+	}
+
+	Solution().InOrder(Node[1]);
+}
+
+void Test1()
+{
+	TreeLinkNode *Node[8];
+
+	Node[1] = new TreeLinkNode(8);
+	Node[2] = new TreeLinkNode(6);
+	Node[3] = new TreeLinkNode(10);
+	Node[4] = new TreeLinkNode(5);
+	Node[5] = new TreeLinkNode(7);
+	Node[6] = new TreeLinkNode(9);
+	Node[7] = new TreeLinkNode(11);
+
+	Node[1]->left = Node[2];
+	Node[1]->right = Node[3];
+	Node[2]->left = Node[4];
+	Node[2]->right = Node[5];
+	Node[3]->left = Node[6];
+	Node[3]->right = Node[7];
+
+	Node[4]->next = Node[2];
+	Node[5]->next = Node[2];
+	Node[6]->next = Node[3];
+	Node[7]->next = Node[3];
+	Node[3]->next = Node[1];
+	Node[2]->next = Node[1];
+
+	TreeLinkNode *TmpNode = (Solution().GetNext(Node[5]));
+
+	cout << TmpNode->val << endl;
+
+
+	Solution().InOrder(Node[1]);
+
+}
+
+
+int main()
+{
+	Test();
+
+	cout << "-------------------------" << endl;
+
+
+	Test1();
+	return 0;
+}
