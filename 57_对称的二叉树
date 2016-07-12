@@ -1,0 +1,163 @@
+#include <iostream>
+using namespace std;
+
+/*
+题目描述：
+请实现一个函数，用来判断一颗二叉树是不是对称的。注意，如果一个二叉树同此二叉树的镜像是同样的，定义其为对称的。
+*/
+
+struct TreeNode
+{
+	int val;
+	struct TreeNode *left;
+	struct TreeNode *right;
+	TreeNode(int x) :
+		val(x), left(NULL), right(NULL)
+	{}
+};
+
+
+class Solution
+{
+public:
+	bool isSymmetrical(TreeNode* pRoot)
+	{
+		if (pRoot == NULL)
+		{
+			return true;
+		}
+		if (pRoot->left == NULL && pRoot->left == NULL)
+		{
+			return true;
+		}
+		else if (pRoot->left != NULL && pRoot->left != NULL)
+		{
+			if (pRoot->left->val == pRoot->right->val)
+			{
+				return _isSymmetrical(pRoot->left, pRoot->right);
+			}
+		}
+		return false;
+	}
+protected:
+	bool _isSymmetrical(TreeNode* left, TreeNode* right)
+	{
+		if (left == NULL && right == NULL)		//叶子结点
+		{
+			return true;
+		}
+		else if (left != NULL && right != NULL)  //左右子节点都存在
+		{
+			TreeNode *NodeLL = left->left;
+			TreeNode *NodeLR = left->right;
+			TreeNode *NodeRL = right->left;
+			TreeNode *NodeRR = right->right;
+			if (!NodeLL && !NodeLR && !NodeRL && !NodeRR)
+			{
+				return true;
+			}
+			else if (NodeLL && NodeRR && !NodeLR && !NodeRL)
+			{
+				if(NodeLL->val == NodeRR->val)
+				{
+					return (_isSymmetrical(NodeLL, NodeRR) && _isSymmetrical(NodeLR, NodeRL));
+				}
+				else
+				{
+					return false;
+				}
+			}
+			else if (!NodeLL && !NodeRR && NodeLR && NodeRL)
+			{
+				if(NodeLR->val == NodeRL->val)
+				{
+					return (_isSymmetrical(NodeLL, NodeRR) && _isSymmetrical(NodeLR, NodeRL));
+				}
+				else
+				{
+					return false;
+				}
+			}
+			else if (NodeLL && NodeLR && NodeRL && NodeRR)
+			{
+				return ( _isSymmetrical(NodeLL, NodeRR) && _isSymmetrical(NodeLR, NodeRL) );
+			}
+			else
+			{
+				return false;
+			}
+
+		}
+		else      //左右子节点一个存在，另外一个不为存在
+		{
+			return false;
+		}
+	}
+};
+
+
+void Test1()
+{
+	TreeNode* Node1 = new TreeNode(8);
+	TreeNode* Node2 = new TreeNode(6);
+	TreeNode* Node3 = new TreeNode(6);
+	TreeNode* Node4 = new TreeNode(5);
+	TreeNode* Node5 = new TreeNode(7);
+	TreeNode* Node6 = new TreeNode(7);
+	TreeNode* Node7 = new TreeNode(5);
+
+	Node1->left = Node2;
+	Node1->right = Node3;
+	Node2->left = Node4;
+	Node2->right = Node5;
+	Node3->left = Node6;
+	Node3->right = Node7;
+
+	cout << Solution().isSymmetrical(Node1) << endl;
+}
+
+void Test2()
+{
+	TreeNode* Node1 = new TreeNode(8);
+	TreeNode* Node2 = new TreeNode(6);
+	TreeNode* Node3 = new TreeNode(9);
+	TreeNode* Node4 = new TreeNode(5);
+	TreeNode* Node5 = new TreeNode(7);
+	TreeNode* Node6 = new TreeNode(7);
+	TreeNode* Node7 = new TreeNode(5);
+
+	Node1->left = Node2;
+	Node1->right = Node3;
+	Node2->left = Node4;
+	Node2->right = Node5;
+	Node3->left = Node6;
+	Node3->right = Node7;
+
+	cout << Solution().isSymmetrical(Node1) << endl;
+}
+
+void Test3()
+{
+	TreeNode* Node1 = new TreeNode(5);
+	TreeNode* Node2 = new TreeNode(3);
+	TreeNode* Node3 = new TreeNode(3);
+	TreeNode* Node4 = new TreeNode(4);
+	TreeNode* Node5 = new TreeNode(4);
+	TreeNode* Node6 = new TreeNode(2);
+	TreeNode* Node7 = new TreeNode(2);
+
+	Node1->left = Node2;
+	Node1->right = Node3;
+	Node2->left = Node4;
+	Node4->left = Node6;
+	Node3->right = Node5;
+	Node5->right = Node7;
+
+	cout << Solution().isSymmetrical(Node1) << endl;
+}
+
+int main()
+{
+	Test3();
+	return 0;
+}
