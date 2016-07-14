@@ -1,0 +1,46 @@
+//这道题 其实就是层次遍历吧？
+
+class Solution
+{
+public:
+	vector<vector<int> >  Print(TreeNode* pRoot)
+	{
+		vector<vector<int> > ret;
+
+		vector<TreeNode*> cur_leval;
+		if (pRoot != NULL)
+		{
+			cur_leval.push_back(pRoot);
+		}
+		_print(cur_leval, ret);
+		return ret;
+	}
+protected:
+	void _print(vector<TreeNode*> cur_leval, vector<vector<int> > &ret)
+	{
+		if (cur_leval.empty() )
+		{
+			return;
+		}
+
+		vector<TreeNode*> next_leval;
+
+		vector<int> cur_leval_val;
+		for (TreeNode* i : cur_leval)
+		{
+			//cout << i->val << " ";
+			cur_leval_val.push_back(i->val);
+			if (i->left != NULL)
+			{
+				next_leval.push_back(i->left);
+			}
+			if (i->right != NULL)
+			{
+				next_leval.push_back(i->right);
+			}
+		}
+		//cout << endl;
+		ret.push_back(cur_leval_val);
+		_print(next_leval, ret);
+	}
+};
