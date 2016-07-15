@@ -1,0 +1,110 @@
+#include <iostream>
+#include <vector>
+#include <iterator>
+using namespace std;
+
+
+
+struct TreeNode 
+{
+	int val;
+	struct TreeNode *left;
+	struct TreeNode *right;
+	TreeNode(int x)
+		:val(x)
+		,left(NULL)
+		,right(NULL)
+	{}
+};
+
+class Solution 
+{
+public:
+	vector<vector<int> > Print(TreeNode* pRoot)
+	{
+		vector<vector<int> > ret;
+		vector<TreeNode*> CurNode;
+		if (pRoot != NULL)
+		{
+			CurNode.push_back(pRoot);
+		}
+		_Print(CurNode, ret);
+		return ret;
+	}
+protected:
+	void _Print(vector<TreeNode*> CurNode, vector<vector<int> >&ret)
+	{
+		if (CurNode.empty())
+		{
+			return;
+		}
+		vector<int> CurNodeVal;
+		vector<TreeNode*> NextNode;
+		vector<TreeNode*>::iterator itbegin= CurNode.end() - 1;
+		vector<TreeNode*>::iterator itend = CurNode.begin();
+		if (_count % 2 == 0)
+		{
+			itbegin = CurNode.begin();
+			itend = CurNode.end();;
+		}
+		while(itbegin != itend || itbegin == CurNode.begin() )
+		{
+			cout << (*itbegin)->val << " ";
+			CurNodeVal.push_back((*itbegin)->val);
+			if ((*itbegin)->left)
+			{
+				NextNode.push_back((*itbegin)->left);
+			}
+			if ((*itbegin)->right)
+			{
+				NextNode.push_back((*itbegin)->right);
+			}
+			if (_count % 2 == 0)
+			{
+				itbegin++;
+			}
+			else
+			{
+				if (itbegin == CurNode.begin())
+				{
+					break;
+				}
+				itbegin--;
+			}
+		}
+		cout << endl;
+		++_count;
+		ret.push_back(CurNodeVal);
+		_Print(NextNode, ret);
+	}
+protected:
+	int _count = 1;		//“左之字” 还是 “右之子” 可以通过_count成员变量的初始值控制
+};
+
+
+void Test()
+{
+	TreeNode *Node1 = new TreeNode(1);
+	TreeNode *Node2 = new TreeNode(2);
+	TreeNode *Node3 = new TreeNode(3);
+	TreeNode *Node4 = new TreeNode(4);
+	TreeNode *Node5 = new TreeNode(5);
+	TreeNode *Node6 = new TreeNode(6);
+	TreeNode *Node7 = new TreeNode(7);
+
+	Node1->left = Node2;
+	Node1->right = Node3;
+	Node2->left = Node4;
+	Node2->right = Node5;
+	Node3->left = Node6;
+	Node3->right = Node7;
+
+	Solution().Print(Node1);
+}
+
+
+int main()
+{
+	Test();
+	return 0;
+}
