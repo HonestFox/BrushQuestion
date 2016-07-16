@@ -1,0 +1,163 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+//这个 每个节点的值的范围只能是 个位数   （因为用char*传参的，如果用vector 就比较好处理了）
+
+
+/*
+题目描述:
+请实现两个函数，分别用来序列化和反序列化二叉树。这里没有规定序列化的方式。
+*/
+
+struct TreeNode
+{
+	int val;
+	struct TreeNode *left;
+	struct TreeNode *right;
+	TreeNode(int x)
+		:val(x)
+		, left(NULL)
+		, right(NULL)
+	{}
+};
+
+#define MAXSIZE 100
+
+class Solution
+{
+public:
+	char* Serialize(TreeNode *root)
+	{
+		if (root == NULL)
+		{
+			return NULL;
+		}
+		char *str = new char[MAXSIZE];
+		memset(str, '\0', MAXSIZE);
+		int index = 0;
+		_Serialize(root, str, index);
+		return  str;
+	}
+
+	TreeNode* Deserialize(char *str) 
+	{
+		if (str == NULL)
+		{
+			return NULL;
+		}
+		TreeNode *root;
+		if (str != NULL && *str != '\0' && *str != '#')
+		{
+			root = new TreeNode(*str - '0');
+		}
+		else
+		{
+			return root;
+		}
+		int index = 1;
+		_Deserialize(str, root, index);
+		return root;
+	}
+protected:
+	void _Serialize(TreeNode *root, char *str, int &index)
+	{
+		if (root == NULL)
+		{
+			str[index] = '#';
+			return;
+		}
+		str[index] = root->val + '0';
+		_Serialize(root->left, str, ++index);
+		_Serialize(root->right, str, ++index);
+	}
+
+	void _Deserialize(char *str, TreeNode *root, int &index)
+	{
+		if (str[index] == '\0')
+		{
+			return;
+		}
+		if (str[index] != '#')
+		{
+			root->left = new TreeNode(str[index] -'0');
+			++index;
+			_Deserialize(str, root->left, index);
+		}
+		else
+		{
+			++index;
+		}
+
+		if (str[index] == '\0')
+		{
+			return;
+		}
+		if (str[index] != '#')
+		{
+			root->right = new TreeNode(str[index] -'0');
+			++index;
+			_Deserialize(str, root->right, index);
+		}
+		else
+		{
+			++index;
+		}
+	}
+
+};
+
+void Test1()
+{
+	TreeNode *Node1 = new TreeNode(1);
+	TreeNode *Node2 = new TreeNode(2);
+	TreeNode *Node3 = new TreeNode(3);
+	TreeNode *Node4 = new TreeNode(4);
+	TreeNode *Node5 = new TreeNode(5);
+	TreeNode *Node6 = new TreeNode(6);
+	TreeNode *Node7 = new TreeNode(78);
+	
+	Node1->left = Node2;
+	Node1->right = Node3;
+	Node2->left = Node4;
+	Node2->right = Node5;
+	Node3->right = Node7;
+	Node4->left = Node6;
+
+	char *ret = Solution().Serialize(Node1);
+	cout << ret << endl;
+}
+
+void Test2()
+{
+	TreeNode *Node1 = new TreeNode(1);
+	TreeNode *Node2 = new TreeNode(2);
+	TreeNode *Node3 = new TreeNode(3);
+	TreeNode *Node4 = new TreeNode(4);
+	TreeNode *Node5 = new TreeNode(5);
+	TreeNode *Node6 = new TreeNode(6);
+	TreeNode *Node7 = new TreeNode(7);
+
+	Node1->left = Node2;
+	Node1->right = Node3;
+	Node2->left = Node4;
+	Node2->right = Node5;
+	Node3->right = Node7;
+	Node4->left = Node6;
+
+	char *ret = Solution().Serialize(Node1);
+	cout << ret << endl;
+
+	TreeNode *RetNode = Solution().Deserialize(ret);
+	char *ret1 = Solution().Serialize(RetNode);
+	cout << ret1 << endl;
+	cout << strcmp(ret, ret1) << endl;
+}
+
+int main()
+{
+	//Test1();
+	//Test2();
+	Test1();
+	return 0;
+}
