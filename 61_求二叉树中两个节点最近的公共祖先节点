@@ -1,0 +1,257 @@
+#include <iostream>
+#include <cassert>
+#include <vector>
+
+
+/*
+	总结：
+	两种方法，时间复杂度是相同的，
+	第一种方法思路简单，但实现起来比较复杂，不过可扩展（比如说，找3个、 4个结点的最近祖先结点）
+	第二种方法思路巧妙，充分利用了二叉树的特性
+*/
+using namespace std;
+
+struct TreeNode
+{
+public:
+	TreeNode(int val)
+		:_val(val)
+		,_left(NULL)
+		,_right(NULL)
+	{}
+public:
+	int _val;
+	TreeNode *_left;
+	TreeNode *_right;
+};
+
+class BinaryTree
+{
+public:
+	BinaryTree(TreeNode *root)
+		:_root(root)
+	{}
+
+	void PrevOrder()
+	{
+		_InOrder(_root);
+		cout << endl;
+	}
+
+
+	//第一种方法
+	//时间复杂度   O(lgN) * O(lgN)
+
+	//已经想到的优化： 一次就找出两个节点和两个父节点(用数组 分别存起来)
+
+	//1.有一个结点已经是根节点
+	//2.同一结点
+	//3.不同结点
+	TreeNode* GetNearRoot_1(TreeNode *Node1, TreeNode *Node2)
+	{
+		assert(Node1);
+		assert(Node2);
+		if (_root == Node1 || _root == Node2)
+		{
+			return NULL;
+		}
+		vector<TreeNode*> NodeBox;		//存放待查找的结点 
+		vector<TreeNode*> RootBox;		//NodeBox中结点的父节点
+		NodeBox.push_back(Node1);
+		if (Node1 != Node2)
+		{
+			NodeBox.push_back(Node2);
+		}
+
+		int sz = 0;
+		bool IsSameChildTree = true;
+
+		while (sz != 1)
+		{
+			IsSameChildTree = true;
+			RootBox.clear();
+			_SearchRoot(_root, NodeBox, RootBox, IsSameChildTree);
+			if (RootBox.size() == 1)
+			{
+				return RootBox[0];
+			}
+			if (sz == 2 && (RootBox[0] == _root || RootBox[1] == _root) )
+			{
+				return _root;
+			}
+			NodeBox = RootBox;
+			if (RootBox[0] == RootBox[1])
+			{
+				RootBox.pop_back();
+			}
+			sz = RootBox.size();
+
+			if (IsSameChildTree)
+			{
+				RootBox.pop_back();
+			}
+		}
+		return RootBox[0];
+
+	}
+
+protected:
+	void _SearchRoot(TreeNode *root,  vector<TreeNode*> &NodeBox, vector<TreeNode*> &RootBox, bool &IsSameChildTree)
+	{
+		if (NULL == root)
+		{
+			return;
+		}
+
+		if (NodeBox.empty())
+		{
+			return;
+		}
+		if (root->_left == NodeBox[0] || root->_right == NodeBox[0])		//第一个元素找到了，则将它存入RootBox, 并在 NodeBox中把它删掉
+		{
+			RootBox.push_back(root);
+			if (NodeBox.size() == 2)
+			{
+				NodeBox[0] = NodeBox[1];
+			}
+			NodeBox.pop_back();
+		}
+ 		else if (NodeBox.size() == 2 && (root->_left == NodeBox[1] || root->_right == NodeBox[1]) )	//第二个元素找到了，将它存入RootBox,并在NodeBox中把他删掉
+		{
+			RootBox.push_back(root);
+			NodeBox.pop_back();
+		}
+
+		_SearchRoot(root->_left, NodeBox, RootBox, IsSameChildTree);
+
+		IsSameChildTree = false;
+		_SearchRoot(root->_right, NodeBox, RootBox, IsSameChildTree);
+
+	}
+	void _InOrder(TreeNode *root)
+	{
+		if (!root)
+		{
+			return;
+		}
+		_InOrder(root->_left);
+		cout << root->_val << " ";
+		_InOrder(root->_right);
+	}
+
+
+
+
+
+	
+	//第二种方法
+public:
+	TreeNode* GetNearRoot_2(TreeNode *Node1, TreeNode *Node2)
+	{
+		return _GetNearRoot_2(_root, Node1, Node2);
+	}
+
+protected:
+	TreeNode* _GetNearRoot_2(TreeNode *root, TreeNode *Node1, TreeNode *Node2)
+	{
+		if (root == NULL || Node1 == NULL || Node2 == NULL)
+		{
+			return NULL;
+		}
+		if (root->_left == Node1 || root->_right == Node1 || root->_left == Node2 || root->_right == Node2)
+		{
+			return root;
+		}
+		TreeNode *pLeft = _GetNearRoot_2(root->_left, Node1, Node2);
+		TreeNode *pRight = _GetNearRoot_2(root->_right, Node1, Node2);
+
+		if (pLeft == NULL)
+		{
+			return pRight;
+		}
+		else if (pRight == NULL)
+		{
+			return pLeft;
+		}
+		else					//左右都不为空，说明分别在根节点的 左右 子树 ，则 肯定他们的最近父节点就是根节点
+		{
+			return root;
+		}
+	}
+
+protected:
+	TreeNode *_root;
+};
+
+void Test()
+{
+	TreeNode *Node1 = new TreeNode(1);
+	TreeNode *Node2 = new TreeNode(2);
+	TreeNode *Node3 = new TreeNode(3);
+	TreeNode *Node4 = new TreeNode(4);
+	TreeNode *Node5 = new TreeNode(5);
+	TreeNode *Node6 = new TreeNode(6);
+	TreeNode *Node7 = new TreeNode(7);
+	Node1->_left = Node2;
+	Node1->_right = Node3;
+	Node2->_left = Node4;
+	Node2->_right = Node5;
+	Node3->_left = Node6;
+	Node3->_right = Node7;
+
+
+	BinaryTree Tree1(Node1);
+	Tree1.PrevOrder();
+
+	cout << Tree1.GetNearRoot_1(Node4, Node6)->_val << endl;
+	cout << Tree1.GetNearRoot_1(Node4, Node7)->_val << endl;
+	cout << Tree1.GetNearRoot_1(Node4, Node2)->_val << endl;
+
+
+	cout << Tree1.GetNearRoot_1(Node4, Node4)->_val << endl;
+	cout << Tree1.GetNearRoot_1(Node4, Node5)->_val << endl;
+	cout << Tree1.GetNearRoot_1(Node4, Node3)->_val << endl;
+	cout << Tree1.GetNearRoot_1(Node2, Node5)->_val << endl;
+
+	//cout << Tree1.GetNearRoot(Node1, Node2)->_val << endl;
+	//cout << Tree1.GetNearRoot(Node1, Node5)->_val << endl;
+}
+
+void Test2()
+{
+	TreeNode *Node1 = new TreeNode(1);
+	TreeNode *Node2 = new TreeNode(2);
+	TreeNode *Node3 = new TreeNode(3);
+	TreeNode *Node4 = new TreeNode(4);
+	TreeNode *Node5 = new TreeNode(5);
+	TreeNode *Node6 = new TreeNode(6);
+	TreeNode *Node7 = new TreeNode(7);
+	Node1->_left = Node2;
+	Node1->_right = Node3;
+	Node2->_left = Node4;
+	Node2->_right = Node5;
+	Node3->_left = Node6;
+	Node3->_right = Node7;
+
+
+	BinaryTree Tree1(Node1);
+	Tree1.PrevOrder();
+
+
+	cout << Tree1.GetNearRoot_2(Node4, Node6)->_val << endl;
+	cout << Tree1.GetNearRoot_2(Node4, Node2)->_val << endl;
+	cout << Tree1.GetNearRoot_2(Node4, Node3)->_val << endl;
+	cout << Tree1.GetNearRoot_2(Node4, Node7)->_val << endl;
+	cout << Tree1.GetNearRoot_2(Node2, Node6)->_val << endl;
+	cout << Tree1.GetNearRoot_2(Node3, Node6)->_val << endl;
+	cout << Tree1.GetNearRoot_2(Node7, Node6)->_val << endl;
+
+
+}
+
+
+int main()
+{
+	Test2();
+	return 0;
+}
