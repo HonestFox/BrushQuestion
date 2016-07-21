@@ -1,0 +1,168 @@
+#include <iostream>
+
+using namespace std;
+
+struct TreeNode
+{
+	TreeNode(int val)
+		:_left(NULL)
+		,_right(NULL)
+		,_val(val)
+	{}
+	TreeNode* _left;
+	TreeNode* _right;
+	int _val;
+};
+
+
+//方法1： 从上往下，对每个节点都求它左右子树的高度，并计算高度差  O(lgN) * O(N)
+//方法2：遍历的那一下就得到高度，也就是，遍历的同时就可以比较  O(N)     (也就是从下往上)
+class BinaryTree
+{
+public:
+	BinaryTree(TreeNode *root)
+		:_root(root)
+	{}
+
+	bool IsBalance()
+	{
+		return _IsBlance(_root);
+	}
+
+protected:
+	bool _IsBlance(TreeNode* root)
+	{
+		if (root == NULL)
+			return true;
+
+ 		int left = _Height(root->_left);
+		int right = _Height(root->_right);
+
+ 		if (abs(right - left) > 1)
+		{
+			//cout << "pos: " << root->_val << endl;
+			return false;
+		}
+
+		return _IsBlance(root->_left) && _IsBlance(root->_right);
+	}
+
+	int _Height(TreeNode* root)
+	{
+		if (root == NULL)
+			return 0;
+
+		int left = _Height(root->_left);
+		int right = _Height(root->_right);
+
+		return left>right ? left + 1 : right + 1;
+	}
+
+
+	/*
+	——————————
+			第二种方法
+	——————————
+	*/
+public:
+	bool IsBalance_2()
+	{
+		int Depth = 0;
+		return _IsBalance_2(_root, Depth);
+	}
+
+protected:
+	bool _IsBalance_2(TreeNode *root, int &Depth)
+	{
+		if (root == NULL)
+		{
+			return true;
+		}
+		int left = 0;
+		int right = 0;
+		if (_IsBalance_2(root->_left, left) && _IsBalance_2(root->_right, right) )
+		{
+			if (abs(left - right) > 1)
+			{
+				cout << root->_val << "这个结点的左右子树不平衡 ！ " << endl;	//打印不平衡的结点的值
+				return false;
+			}
+			else
+			{	
+				int max = left;
+				if (left < right)
+				{
+					max = right;
+				}
+				Depth = max + 1;
+				return true;
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+protected:
+	TreeNode* _root;
+};
+
+
+void Test()
+{
+	TreeNode *Node1 = new TreeNode(1);
+	TreeNode *Node2 = new TreeNode(2);
+	TreeNode *Node3 = new TreeNode(3);
+	TreeNode *Node4 = new TreeNode(4);
+	TreeNode *Node5 = new TreeNode(5);
+	TreeNode *Node6 = new TreeNode(6);
+	TreeNode *Node7 = new TreeNode(7);
+	TreeNode *Node8 = new TreeNode(8);
+	TreeNode *Node9 = new TreeNode(9);
+
+	Node1->_left = Node2;
+	Node1->_right = Node3;
+	Node2->_left = Node4;
+	Node2->_right = Node5;
+	Node3->_left = Node6;
+	Node3->_right = Node7;	
+
+	Node4->_left = Node8;
+	Node8->_left = Node9;
+
+	BinaryTree Tree(Node1);
+	cout << Tree.IsBalance() << endl;
+}
+
+void Test1()
+{
+	TreeNode *Node1 = new TreeNode(1);
+	TreeNode *Node2 = new TreeNode(2);
+	TreeNode *Node3 = new TreeNode(3);
+	TreeNode *Node4 = new TreeNode(4);
+	TreeNode *Node5 = new TreeNode(5);
+	TreeNode *Node6 = new TreeNode(6);
+	TreeNode *Node7 = new TreeNode(7);
+	TreeNode *Node8 = new TreeNode(8);
+	TreeNode *Node9 = new TreeNode(9);
+
+	Node1->_left = Node2;
+	Node1->_right = Node3;
+	Node2->_left = Node4;
+	Node2->_right = Node5;
+	Node3->_left = Node6;
+	Node3->_right = Node7;
+
+	Node4->_left = Node8;
+	Node8->_left = Node9;
+
+	BinaryTree Tree(Node1);
+	Tree.IsBalance_2();
+}
+
+int main()
+{
+	Test1();
+	return 0;
+}
