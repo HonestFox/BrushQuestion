@@ -1,0 +1,87 @@
+#include <iostream>
+using namespace std;
+
+struct TreeNode
+{
+	TreeNode(int val)
+		:_left(NULL)
+		,_right(NULL)
+		,_val(val)
+	{}
+	TreeNode* _left;
+	TreeNode* _right;
+	int _val;
+};
+
+class BinaryTree
+{
+public:
+	BinaryTree(TreeNode *root)
+		:_root(root)
+	{}
+	//思路：每个子问题： 左子树的最大深度 + 右子树的最大深度 
+	//          至于深度，有点类似上一题中判断二叉树平衡的第二种方法
+	int GetMaxDistance()
+	{
+		int Distance = 0;
+		int Depth = 0;
+		_GetMaxDistance(_root, Distance);
+		return Distance;
+	}
+protected:
+	int _GetMaxDistance(TreeNode *root, int &Distance)
+	{
+		if (root == NULL)
+		{
+			return 0;
+		}
+		int left = 0;
+		int right = 0;
+		left = _GetMaxDistance(root->_left, Distance);
+		right = _GetMaxDistance(root->_right, Distance);
+		if ((left + right) > Distance)
+		{
+			Distance = left + right ;
+		}
+		return( left > right ? left : right) + 1;
+	}
+protected:
+	TreeNode* _root;
+};
+
+void Test()
+{
+	TreeNode *Node1 = new TreeNode(1);
+	TreeNode *Node2 = new TreeNode(2);
+	TreeNode *Node3 = new TreeNode(3);
+	TreeNode *Node4 = new TreeNode(4);
+	TreeNode *Node5 = new TreeNode(5);
+	TreeNode *Node6 = new TreeNode(6);
+	TreeNode *Node7 = new TreeNode(7);
+	TreeNode *Node8 = new TreeNode(8);
+
+
+	//Node1->_left = Node2;
+	//Node1->_right = Node3;
+	//Node2->_left = Node4;
+	//Node2->_right = Node5;
+	//Node3->_left = Node6;
+	//Node3->_right = Node7;
+//	Node5->_right = Node8;
+
+	Node1->_left = Node2;
+	Node2->_left = Node3;
+	Node2->_right = Node4;
+	Node3->_left = Node5;
+	Node4->_right = Node6;
+
+	BinaryTree Tree1(Node1);
+
+	cout << Tree1.GetMaxDistance() << endl;
+}
+
+int main()
+{
+	Test();
+	return 0;
+}
