@@ -1,0 +1,151 @@
+/////////////////////
+/////////////////////
+//Solution.h
+//////////////////////
+/////////////////////
+#pragma once
+#include <iostream>
+#include <vector>
+using namespace std;
+
+struct TreeNode
+{
+	TreeNode *_left;
+	TreeNode *_right;
+	int _val;
+	TreeNode(int val)
+		:_val(val)
+		, _left(NULL)
+		, _right(NULL)
+	{}
+};
+
+TreeNode* _RebuildBinaryTree(TreeNode *root, vector<int> &PreOrdVec, vector<int> InOrdVec)
+{
+	if (InOrdVec.empty() || PreOrdVec.empty())
+	{
+		return NULL;
+	}
+	PreOrdVec.erase(PreOrdVec.begin());
+	vector<int>::iterator iPos = find(InOrdVec.begin(), InOrdVec.end(), root->_val);
+	vector<int> LVec(InOrdVec.begin(), iPos);					//{ )
+	vector<int> RVec(iPos + 1, InOrdVec.end());				//{ )
+	if (!LVec.empty())
+	{
+		TreeNode *next = new TreeNode(PreOrdVec[0]);
+		root->_left = _RebuildBinaryTree(next, PreOrdVec, LVec);
+	}
+	if (!RVec.empty())
+	{
+		TreeNode *next = new TreeNode(PreOrdVec[0]);
+		root->_right = _RebuildBinaryTree(next, PreOrdVec, RVec);
+	}
+	return root;
+}
+
+TreeNode* RebuildBinaryTree(vector<int> PreOrdVec, vector<int> InOrdVec)
+{
+	if (PreOrdVec.size() != InOrdVec.size() || PreOrdVec.size() == 0)
+	{
+		return NULL;
+	}
+	TreeNode *root = new TreeNode(PreOrdVec[0]);
+	_RebuildBinaryTree(root, PreOrdVec, InOrdVec);
+	return root;
+}
+
+
+
+
+
+/////////////////////
+/////////////////////
+//test.cpp
+//////////////////////
+/////////////////////
+#include <iostream>
+#include <vector>
+#include "Solution.h"
+
+
+//1、基本功能的实现
+//2、比较好的测试函数
+
+using namespace std;
+
+void _PrevOrder(TreeNode *root, vector<int> &ret)
+{
+	if (root == NULL)
+	{
+		return;
+	}
+	cout << root->_val << " ";
+	ret.push_back(root->_val);
+	_PrevOrder(root->_left, ret);
+	_PrevOrder(root->_right, ret);
+}
+
+vector<int> PrevOrder(TreeNode *root)
+{
+	vector<int> ret;
+	_PrevOrder(root, ret);
+	cout << endl;
+	return ret;
+}
+
+void _InOrder(TreeNode *root, vector<int> &ret)
+{
+	if (root == NULL)
+	{
+		return;
+	}
+	_InOrder(root->_left, ret);
+	cout << root->_val << " ";
+	ret.push_back(root->_val);
+	_InOrder(root->_right, ret);
+}
+
+vector<int> InOrder(TreeNode *root)
+{
+	vector<int> ret;
+	_InOrder(root, ret);
+	cout << endl;
+	return ret;
+}
+
+bool Check(TreeNode *root, vector<int> PrevOrdVec, vector<int> InOrdVec)
+{
+	vector<int> PrevOrdVec1 = PrevOrder(root);
+	vector<int> InOrdVec1 = InOrder(root);
+	return (PrevOrdVec == PrevOrdVec1 && InOrdVec == InOrdVec1);
+
+}
+
+
+void Test()
+{
+	vector<int> PrevOrdVec = { 1, 2, 3 ,4 ,5, 6 };
+	//vector<int> InOrdVec = { 3, 2, 4, 1, 6, 5 };
+	//vector<int> InOrdVec = { 3, 2, 4, 1, 5, 6 };
+	vector<int> InOrdVec = { 4, 3, 2, 1, 6, 5};
+
+
+	TreeNode *root = RebuildBinaryTree(PrevOrdVec, InOrdVec);
+	PrevOrder(root);
+	InOrder(root);
+
+	if (Check(root, PrevOrdVec, InOrdVec))
+	{
+		cout << " currect result      o(^▽^)o " << endl;
+	}
+	else
+	{
+		cout << " wrong result        〒_〒   " << endl;
+	}
+}
+
+int main()
+{
+	Test();
+	return 0;
+}
