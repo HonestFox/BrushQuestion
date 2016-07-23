@@ -1,0 +1,81 @@
+#include <iostream>
+using namespace std;
+
+/*
+题目描述:
+给定一颗二叉搜索树，请找出其中的第k大的结点。例如， 5 / \ 3 7 /\ /\ 2 4 6 8 中，按结点数值大小顺序第三个结点的值为4。
+*/
+
+struct TreeNode
+{
+	int val;
+	TreeNode *left;
+	TreeNode *right;
+	TreeNode(int x)
+		:val(x)
+		, left(NULL)
+		, right(NULL)
+	{}
+};
+
+class Solution 
+{
+public:
+	TreeNode* KthNode(TreeNode* pRoot, unsigned int k)
+	{
+		return _KthNode(pRoot, k);
+	}
+protected:
+	TreeNode* _KthNode(TreeNode *pRoot, unsigned int &k)
+	{
+		if (pRoot == NULL)
+		{
+			return NULL;
+		}
+		TreeNode *ret = _KthNode(pRoot->left, k);
+		if (ret != NULL)
+		{
+			return ret;
+		}
+
+		k--;
+		if (k == 0)
+		{
+			return pRoot;
+		}
+
+		ret = _KthNode(pRoot->right, k);
+		if (ret != NULL)
+		{
+			return ret;
+		}
+		return NULL;
+	}
+};
+
+void Test()
+{
+	TreeNode *Node1 = new TreeNode(5);
+	TreeNode *Node2 = new TreeNode(3);
+	TreeNode *Node3 = new TreeNode(7);
+	TreeNode *Node4 = new TreeNode(2);
+	TreeNode *Node5 = new TreeNode(4);
+	TreeNode *Node6 = new TreeNode(6);
+	TreeNode *Node7 = new TreeNode(8);
+
+	Node1->left = Node2;
+	Node1->right = Node3;
+	Node2->left = Node4;
+	Node2->right = Node5;
+	Node3->left = Node6;
+	Node3->right = Node7;
+
+	TreeNode *ret = Solution().KthNode(Node1, 3);
+	cout << ret->val << endl;
+}
+
+int main()
+{
+	Test();
+	return 0;
+}
