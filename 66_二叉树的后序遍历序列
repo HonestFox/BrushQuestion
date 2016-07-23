@@ -1,0 +1,74 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+/*
+题目描述:
+	输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历的结果。
+	如果是则输出Yes,否则输出No。假设输入的数组的任意两个数字都互不相同。
+*/
+
+class Solution 
+{
+public:
+	bool VerifySquenceOfBST(vector<int> sequence) 
+	{
+		if (sequence.empty())
+		{
+			return false;
+		}
+		int root = *( sequence.end() - 1 );
+		return _VerifySquenceOfBST(sequence);
+	}
+protected:
+	bool _VerifySquenceOfBST(vector<int> &sequence)
+	{
+		if (sequence.empty())
+		{
+			return true;
+		}
+		int root = *(sequence.end() - 1);
+		sequence.pop_back();
+		if (sequence.empty())
+		{
+			return true;
+		}
+
+		int i = 0;
+		int sz = sequence.size();
+		vector<int> left;
+		vector<int> right;
+		while (i < sz && sequence[i] < root)
+		{
+			left.push_back(sequence[i++]);
+		}
+		while (i < sz)
+		{
+			if (sequence[i] <= root)
+			{
+				return false;
+			}
+			right.push_back(sequence[i++]);
+		}
+		return _VerifySquenceOfBST(left) && _VerifySquenceOfBST(right);
+	}
+
+};
+
+void Test()
+{
+	//vector<int> ivec = { 2, 4, 3, 6, 8, 7, 5 };		//true
+	//vector<int> ivec = { 1, 2, 3, 5, 4 };		//true
+	//vector<int> ivec = { 1, 1, 1, 1, 1 };		//false
+	vector<int> ivec = { 1, 2, 3, 4, 5 };		//false
+	
+
+
+	cout << Solution().VerifySquenceOfBST(ivec) << endl;
+}
+
+int main()
+{
+	Test();
+	return 0;
+}
