@@ -1,0 +1,134 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+/*
+题目描述：
+如何得到一个数据流中的中位数？
+如果从数据流中读出奇数个数值，那么中位数就是所有数值排序之后位于中间的数值。
+如果从数据流中读出偶数个数值，那么中位数就是所有数值排序之后中间两个数的平均值。
+*/
+
+
+struct Pos
+{
+	int _count = 0;				 //记录该位置下标对应数据出现的次数  （为什么要这个变量？因为有可能有重复的数据）
+	bool _IsExist = false;	 //记录是否存在
+};
+
+class Solution
+{
+public:
+	void Insert(int num)
+	{
+		if (num < 0)
+		{
+			num *= -1;
+			_Insert(_Nvec, num, -1);
+			++_NSize;
+		}
+		else
+		{
+			_Insert(_Pvec, num, 1);
+			++_PSize;
+		}
+	}
+
+	double GetMedian()
+	{
+		int size = _PSize + _NSize;
+		int pos = _PSize - _NSize;      //size   pos  奇偶性一定是相同的
+		int symbol = 1;
+		if (pos < 0)
+		{
+			symbol = -1;
+			pos *= -1;
+		}
+		double ret = 0;
+		if (pos % 2 == 0)		//偶数
+		{
+			if (symbol == 1)
+			{
+				ret = ((double)_GetIndexVal(_Pvec, pos / 2) + (double)_GetIndexVal(_Pvec, pos / 2 - 1)) / 2;
+			}
+			else
+			{
+				ret = ((double)_GetIndexVal(_Nvec, pos / 2) + (double)_GetIndexVal(_Nvec, pos / 2 - 1) ) / 2;
+			}
+		}
+		else						//奇数
+		{
+			if (symbol == 1)
+			{
+				ret = _GetIndexVal(_Pvec, pos / 2);
+			}
+			else
+			{
+				ret = _GetIndexVal(_Nvec, pos / 2);
+			}
+		}
+		ret *= symbol;
+		return ret;
+	}
+
+protected:
+	void _Insert(vector<Pos> &vec, int num, int symbol = 1)
+	{
+		//判断容量
+		if (num >= vec.size())
+		{
+			vec.resize(num * 2 + 1);
+		}
+		//生成结点
+		Pos pos;
+		pos._IsExist = true;
+		++pos._count;
+		//插入
+		vec[num] = pos;
+	}
+
+	int _GetIndexVal( vector<Pos> vec, int pos)           //pos表示第几个元素 
+	{
+		int index = 0;
+		while (pos >= 0)
+		{
+			while (pos >= 0 && vec[index]._IsExist && vec[index]._count > 0)
+			{
+				--vec[index]._count;
+				--pos;
+				if (vec[index]._count == 0)
+				{
+					vec[index]._IsExist = false;
+				}
+			}
+			if (pos < 0)
+			{
+				break;
+			}
+			++index;
+		}
+		return index;
+	}
+
+protected:
+	vector<Pos> _Pvec;		//存放正数的数组
+	vector<Pos> _Nvec;		//存放负数的数组
+	int _PSize = 0;						//正数的数目
+	int _NSize = 0;						//负数的数目
+};
+
+int main()
+{
+	Solution s;
+	s.Insert(-1);
+	s.Insert(-2);
+	s.Insert(-3);
+	s.Insert(-4);
+	s.Insert(1);
+	s.Insert(2);
+	double ret = s.GetMedian();
+	cout << ret << endl;
+	return 0;
+
+}
