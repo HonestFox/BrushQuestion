@@ -1,0 +1,59 @@
+//这些题其实都很简单的。。 主要是人家的在线编译器用得太不习惯了 而且题目太长了。。
+
+
+
+/*
+题目描述
+小赛是一名幸运的程序员。
+虽然他成功帮助小朋友以最快时间夺回了狼堡，但是面试官却打算和他说拜拜了。
+理由是——游戏天赋太高，有不务正业、走火入魔的倾向QAQ……
+尽管小赛很不能接受这个理由，可是却只能心灰意冷地吃下这个结果。
+然而，在他即将走出门的时候，面试官给了幸运的小赛一个最后的机会。
+原来，面试官的手机被他调皮的儿子小明用一个数字作为密码锁上了。
+小明只记得这个数字的十进制范围是l~r，且这个数的二进制表示中恰有m个1，却不记得确切的数字了。
+面试官可急坏了。这才有了小赛一个将功赎过的机会。
+他想要让小赛算出，他最坏情况下，要试多少次密码才能确保打开手机呢？
+请输出这个次数。
+*/
+
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+
+int GetCountOfOne(int num)
+{
+	int count = 0;
+	while (num > 0)
+	{
+		num = num & (num - 1);
+		++count;
+	}
+	return count;
+}
+
+int GetWorstNum(int l, int r, int m)
+{
+	int Count = 0;   //最坏情况下的次数
+	for (int num = l; num <= r; ++num)
+	{
+		if (GetCountOfOne(num) == m)
+		{
+			++Count;
+			//printf("%x\n", num);
+		}
+	}
+	if (Count == 0)
+	{
+		//cout << -1 << endl;
+		return -1;
+	}
+	//cout << Count << endl;
+	return Count;
+}
+
+int main(int argc, char *argv[])
+{
+	int ret = GetWorstNum(atoi(argv[1]), atoi(argv[2]), atoi(argv[3]));		//0001      1111
+	cout << ret << endl;
+	return 0;
+}
