@@ -1,0 +1,124 @@
+//PS: 这段代码的运行结果 在牛客上 跟我在本地运行的不一样，  本地是可以通过的
+
+struct Path
+{
+	Path(int rows, int cols)
+		:_rows(rows)
+		,_cols(cols)
+	{}
+	int _rows;
+	int _cols;
+};
+
+class Solution {
+public:
+	bool hasPath(char* matrix, int rows, int cols, char* str)
+	{
+		if (matrix == NULL || str == NULL || cols < 0 || rows < 0)
+		{
+			return false;
+		}
+		if ((rows + cols) < strlen(str))
+		{
+			return false;
+		}
+		char *curStr = str;
+		int curRow = -1;
+		int curCol = -1;
+		//寻找入口
+		if (false == searchEnter(matrix, rows, cols, curStr, curRow, curCol)) //没找到
+		{
+			return false;
+		}
+		_pvec.push_back(Path(curRow, curCol));
+		while ( *curStr != '\0' )
+		{
+			if (true == _pvec.empty())
+			{
+				return false;
+			}
+			char prevChr = *curStr;
+			if (true == searchPath(matrix, rows, cols, curStr, curRow - 1, curCol))
+			{
+				--curRow;
+				++curStr;
+			}
+			if (true == searchPath(matrix, rows, cols, curStr, curRow + 1, curCol))
+			{
+				++curRow;
+				++curStr;
+			}
+			if (true == searchPath(matrix, rows, cols, curStr, curRow, curCol - 1))
+			{
+				--curCol;
+				++curStr;
+			}
+			if (true == searchPath(matrix, rows, cols, curStr, curRow, curCol + 1))
+			{
+				++curCol;
+				++curStr;
+			}
+			if ( prevChr != *curStr )	//说明找到了
+			{
+				_pvec.push_back(Path(curRow, curCol));
+				continue;
+			}
+			//都没找到
+			if ( true == _pvec.empty())
+			{
+				return false;
+			}
+			else
+			{
+				--curStr;
+				_pvec.pop_back();
+			}
+		}
+		return true;
+	}
+protected:
+	bool hasPassed(char *matrix, int rows, int cols)	//判断是否已经走过
+	{
+		vector<Path>::iterator pit = _pvec.begin();
+		while (pit != _pvec.end())
+		{
+			if (rows == pit->_rows && cols == pit->_cols)
+			{
+				return true;
+			}
+			++pit;
+		}
+		return false;
+	}
+	bool searchEnter(char *matrix, int rows, int cols, char *curStr, int &curRow, int &curCol)
+	{
+		for (int i = 0; i < rows; ++i)
+		{
+			for (int j = 0; j < cols; ++j)
+			{
+				if (*(matrix + i * cols + j) == *curStr) //找到入口
+				{
+					curRow = i;
+					curCol = j;
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	bool searchPath(char *matrix, int rows, int cols, char *curStr, int curRow, int curCol)
+	{
+		if (curRow < 0 || curCol < 0 || curRow > rows, curCol > cols)
+		{
+			return false;
+		}
+		if (true == hasPassed(matrix, curRow, curCol))
+		{
+			return false;
+		}
+		return *(matrix + curRow * cols + curCol) == *curStr;
+	}
+protected:
+	vector<Path> _pvec;
+};
