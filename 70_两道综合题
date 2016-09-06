@@ -1,0 +1,245 @@
+#include <iostream>
+#include <cassert>
+using namespace std;
+/////////////////////////////////////////////////第一题
+/*
+	将链表中的所有元素为奇数的节点移到元素为偶数节点的前面，并使奇数之间顺序反转，偶数之间顺序反转。
+
+	注意点和要求如下:
+	1. swap函数要求对节点的指针/引用进行操作（不得创建任何新的链表节点）
+	2. 不得使用任何库函数/API，如需使用类似功能, 请自行实现
+	3. 不得将链表转化为其他类型数据结构再进行交换，如数组等
+*/
+
+struct node 
+{
+	node(int val)
+		:next(NULL)
+		,value(val)
+	{}
+	struct node *next;
+	int value;
+};
+
+typedef struct node node;
+
+//反转链表
+void ReverseList(node *(&list)) ////为了修改方便，传参直接传 指针的引用
+{
+	assert(list);
+	if (list->next == NULL)
+	{
+		return;
+	}
+	node *prev = list;
+	node *cur = list->next;
+	node *next = cur->next;
+	while (cur != NULL)
+	{
+		if (prev == list)
+		{
+			prev->next = NULL;
+		}
+		cur->next = prev;
+		prev = cur;
+		cur = next;
+		if (next == NULL)
+		{
+			break;
+		}
+		next = next->next;
+	}
+	list = prev;
+}
+
+node *swap(node *list) 
+{
+	assert(list != NULL);
+	//1、将偶数节点移到奇数节点前面，并保持奇、偶结点内部的相对位置不变
+	node *prev = NULL;
+	node *cur = list;
+	node *on_pos = NULL; //奇数的位置的前一个
+	node *en_pos = NULL; //偶数的位置
+	node *op_next = NULL; //奇数的位置
+	bool change = false;
+
+	while (cur != NULL && cur->next != NULL)
+	{
+		if (cur->value % 2 != 0)
+		{
+			op_next = cur;
+			prev = cur;
+			change = true;
+		}
+		else if (cur->next->value % 2 != 0)
+		{
+			prev = cur;
+			on_pos = prev;
+			op_next = prev->next;
+			change = true;
+		}
+		if (true == change)
+		{
+			while (cur != NULL && cur->next != NULL)
+			{
+				if (cur->next->value % 2 == 0)
+				{
+					en_pos = cur->next;
+					cur->next = en_pos->next;
+					if(on_pos != NULL)
+					{
+						on_pos->next = en_pos;
+					}
+					else
+					{
+						list = en_pos;
+					}
+					en_pos->next = op_next;
+					break;
+				}
+				cur = cur->next;
+			}
+			cur = prev;	
+			change = false;
+		}
+		cur = cur->next;
+	}
+	//反转
+	ReverseList(list);
+	return list;
+}
+
+//4 5 7 1 6   ->      4 6 5 7 1
+//1 6   -> 6 
+//7 1 6  -> 6 7 1
+
+void PrintList(node *list)
+{
+	node  *cur = list;
+	while (cur)
+	{
+		cout << cur->value << " -> ";
+		cur = cur->next;
+	}
+	cout << "NULL" << endl;
+}
+
+//第一题的测试
+void Test1()
+{
+	node *node1 = new node(4);
+	node *node2 = new node(5);
+	node *node3 = new node(7);
+	node *node4 = new node(1);
+	node *node5 = new node(6);
+	node1->next = node2;
+	node2->next = node3;
+	node3->next = node4;
+	node4->next = node5;
+	//PrintList(node1);
+
+	//ReverseList的测试
+	//ReverseList(node1);
+	//PrintList(node1);
+
+
+	node *ret = swap(node1);
+	PrintList(ret);
+
+
+}
+
+
+////////////////////////////////////////////////////////第二题
+/*
+给一个正整数 n, 找到若干个完全平方数(比如1, 4, 9, ... )使得他们的和等于 n。你需要让平方数的个数最少。
+给出 n = 12, 返回 3 因为 12 = 4 + 4 + 4。    = 9 + 
+给出 n = 13, 返回 2 因为 13 = 4 + 9。
+
+*/
+
+
+//返回n的平方根
+int GetSquareRoot(int n)	
+{
+	if (n <= 1)
+	{
+		return n;
+	}
+	int min = 0;
+	int max = n;
+	int cur = 0;
+	while (min < max)
+	{
+		cur = min - (min - max) / 2;  
+		if (cur * cur == n)
+		{
+			return cur;
+		}
+		else if ((cur) * (cur) < n && (cur+1) * (cur+1) > n)
+		{
+			return cur;
+		}
+		else if ((cur-1)* (cur-1) < n && cur * cur > n)
+		{
+			return cur-1;
+		}
+		else if (cur * cur < n)
+		{
+			min = cur;
+		}
+		else if (cur * cur > n)
+		{
+			max = cur;
+		}
+	}
+	return cur;
+}
+
+//主体函数的递归
+int _GetPerfectSquare(int n)
+{
+	if (n <= 1)
+	{
+		return n;
+	}
+	int cur = GetSquareRoot(n);
+	int prev = cur - 1;
+	if (cur > 0 && 0 == n % (cur * cur))
+	{
+		int DivRet = n / (cur * cur);
+		return DivRet;
+	}
+	if ( prev > 1 && 0 == n % (prev * prev) )
+	{
+		int DivRet = n / (prev * prev);
+		return DivRet;
+	}
+	return 1 + _GetPerfectSquare(n - cur*cur);
+}
+
+//主体函数
+int GetPerfectSquare( int n )
+{
+	return _GetPerfectSquare(n);
+}
+
+//第二题的测试
+void Test2()
+{
+	//对GetPerfectSquare的测试
+	for (int i = 0; i < 100; ++i)
+	{
+		cout << i << ": ";
+		cout << GetPerfectSquare(i) << endl;
+	}
+}
+ 
+
+
+int main()
+{
+	Test1();
+	//Test2();
+	return 0;
+}
